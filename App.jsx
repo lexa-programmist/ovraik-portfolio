@@ -578,24 +578,144 @@ const Exploring = () => (
 );
 
 // ─── CONTACT ─────────────────────────────────────────────────────────────────
-const contactLinks = [
-  {
-    label:  "Telegram",
-    handle: "@ovraik",
-    href:   "https://t.me/ovraik",
-  },
-  {
-    label:  "LinkedIn",
-    handle: "Alexey Raikov",
-    secondary: true,
-    href:   "https://www.linkedin.com/in/alexey-raikov-20224228a?utm_source=share_via&utm_content=profile&utm_medium=member_ios",
-  },
-  {
-    label:  "Email",
-    handle: "ovraikin@gmail.com",
-    href:   "mailto:ovraikin@gmail.com",
-  },
-];
+
+// SVG arrow icon — monochrome, minimal, no emoji
+const ArrowIcon = ({ style }) => (
+  <svg
+    width="14" height="14" viewBox="0 0 14 14"
+    fill="none" xmlns="http://www.w3.org/2000/svg"
+    style={style}
+  >
+    <path d="M2.5 11.5L11 3M11 3H4.5M11 3V9.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+// Single contact row (Telegram, Email)
+const ContactRow = ({ label, handle, href }) => {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <motion.a
+      href={href}
+      target={href.startsWith("mailto") ? "_self" : "_blank"}
+      rel="noopener noreferrer"
+      whileHover={{ x: 3 }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        padding: "15px 16px",
+        borderBottom: `1px solid ${tk.border}`,
+        textDecoration: "none",
+        background: hovered ? tk.surface : "transparent",
+        transition: "background 0.18s",
+      }}
+    >
+      <div style={{ display: "flex", gap: "24px", alignItems: "center" }}>
+        <span style={{
+          fontFamily: "'DM Mono',monospace", fontSize: "11px",
+          color: tk.muted, minWidth: "64px", letterSpacing: "0.04em",
+        }}>
+          {label}
+        </span>
+        <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "14px", color: tk.text }}>
+          {handle}
+        </span>
+      </div>
+      <ArrowIcon style={{
+        color: hovered ? tk.text : tk.muted,
+        opacity: hovered ? 1 : 0.6,
+        transition: "color 0.18s, opacity 0.18s",
+        flexShrink: 0,
+      }} />
+    </motion.a>
+  );
+};
+
+// LinkedIn row — two separate actions: Profile + Open App
+const LinkedInRow = () => {
+  const [hovered, setHovered] = useState(false);
+  const profileUrl = "https://www.linkedin.com/in/alexey-raikov-20224228a";
+  const appUrl = "linkedin://in/alexey-raikov-20224228a";
+
+  const handleOpenApp = (e) => {
+    e.preventDefault();
+    // Try app first, fall back to browser
+    const start = Date.now();
+    window.location.href = appUrl;
+    setTimeout(() => {
+      if (Date.now() - start < 1500) {
+        window.open(profileUrl, "_blank", "noopener,noreferrer");
+      }
+    }, 800);
+  };
+
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        display: "flex", justifyContent: "space-between", alignItems: "center",
+        padding: "15px 16px",
+        borderBottom: `1px solid ${tk.border}`,
+        background: hovered ? tk.surface : "transparent",
+        transition: "background 0.18s",
+      }}
+    >
+      {/* Left — label + handle */}
+      <div style={{ display: "flex", gap: "24px", alignItems: "center" }}>
+        <span style={{
+          fontFamily: "'DM Mono',monospace", fontSize: "11px",
+          color: tk.muted, minWidth: "64px", letterSpacing: "0.04em",
+        }}>
+          LinkedIn
+        </span>
+        <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "14px", color: tk.text }}>
+          Alexey Raikov
+        </span>
+      </div>
+
+      {/* Right — two action links */}
+      <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
+        <LinkedInAction href={profileUrl} label="Profile" />
+        <span style={{ color: tk.border, fontSize: "11px", userSelect: "none" }}>·</span>
+        <LinkedInAction href={appUrl} label="Open App" onClick={handleOpenApp} />
+      </div>
+    </div>
+  );
+};
+
+const LinkedInAction = ({ href, label, onClick }) => {
+  const [h, setH] = useState(false);
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      onClick={onClick}
+      onMouseEnter={() => setH(true)}
+      onMouseLeave={() => setH(false)}
+      style={{
+        display: "inline-flex", alignItems: "center", gap: "4px",
+        fontFamily: "'DM Mono',monospace", fontSize: "11px",
+        color: h ? tk.text : tk.muted,
+        textDecoration: "none",
+        letterSpacing: "0.04em",
+        padding: "3px 6px",
+        borderRadius: "3px",
+        background: h ? "rgba(255,255,255,0.05)" : "transparent",
+        transition: "color 0.15s, background 0.15s",
+      }}
+    >
+      {label}
+      <ArrowIcon style={{
+        width: 11, height: 11,
+        color: h ? tk.text : tk.muted,
+        opacity: h ? 1 : 0.55,
+        transition: "color 0.15s, opacity 0.15s",
+      }} />
+    </a>
+  );
+};
 
 const Contact = () => (
   <section id="contact" style={{ padding: "80px 24px 100px", position: "relative", zIndex: 1 }}>
@@ -630,37 +750,9 @@ const Contact = () => (
         {/* Right — contact rows */}
         <Reveal delay={0.1}>
           <div style={{ display: "flex", flexDirection: "column", paddingTop: "4px" }}>
-            {contactLinks.map((l) => (
-              <motion.a
-                key={l.label}
-                href={l.href}
-                target={l.href.startsWith("mailto") ? "_self" : "_blank"}
-                rel="noopener noreferrer"
-                whileHover={{ x: 3 }}
-                style={{
-                  display: "flex", justifyContent: "space-between", alignItems: "center",
-                  padding: "15px 16px",
-                  borderBottom: `1px solid ${tk.border}`,
-                  textDecoration: "none",
-                  transition: "background 0.18s",
-                }}
-                onMouseEnter={e => { e.currentTarget.style.background = tk.surface; }}
-                onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
-              >
-                <div style={{ display: "flex", gap: "24px", alignItems: "center" }}>
-                  <span style={{
-                    fontFamily: "'DM Mono',monospace", fontSize: "11px",
-                    color: tk.muted, minWidth: "64px", letterSpacing: "0.04em",
-                  }}>
-                    {l.label}
-                  </span>
-                  <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "14px", color: tk.text }}>
-                    {l.handle}
-                  </span>
-                </div>
-                <span style={{ color: tk.muted, fontSize: "13px" }}>↗</span>
-              </motion.a>
-            ))}
+            <ContactRow label="Telegram" handle="@ovraik" href="https://t.me/ovraik" />
+            <LinkedInRow />
+            <ContactRow label="Email" handle="ovraikin@gmail.com" href="mailto:ovraikin@gmail.com" />
           </div>
         </Reveal>
 
