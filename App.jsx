@@ -84,7 +84,7 @@ const Nav = ({ active }) => {
       }}
     >
       <div style={{
-        maxWidth: "1200px", margin: "0 auto", padding: "0 40px",
+        padding: "0 40px",
         height: "52px", display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <a href="#" style={{ textDecoration: "none" }}>
@@ -478,7 +478,7 @@ const CurrentFocus = () => (
           <Reveal key={c.title} delay={i * 0.07}>
             <motion.div
               whileHover={{ background: tk.surfaceHov }}
-              style={{ background: tk.surface, padding: "28px 24px", minHeight: "160px", transition: "background 0.2s", border: `1px solid ${tk.border}`, borderRadius: "10px" }}
+              style={{ background: tk.surface, padding: "28px 24px", height: "100%", minHeight: "200px", transition: "background 0.2s", border: `1px solid ${tk.border}`, borderRadius: "10px", display: "flex", flexDirection: "column" }}
             >
               <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "16px", color: tk.accent, display: "block", marginBottom: "12px" }}>
                 {c.icon}
