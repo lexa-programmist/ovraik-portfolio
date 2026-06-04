@@ -845,6 +845,25 @@ export default function HomePage() {
         <CurrentFocus />
         <Exploring />
         <Contact />
+        
+        {/* Hidden SEO section for search engines */}
+        <section style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", overflow: "hidden" }} aria-hidden="true">
+          <h2>About Alexey Raikov (Ovraik)</h2>
+          <p>
+            Alexey Raikov, also known as Ovraik, is a product builder and automation developer from Belarus. 
+            Specializing in Telegram Mini Apps development, AI workflows, and automation systems. 
+            Creator of Fishka, a Telegram Mini App marketplace for streetwear resellers and independent brands.
+          </p>
+          <p>
+            Skills include product development, marketplace design, automation systems, AI-powered workflows, 
+            internal tooling, and distribution systems. Based in Belarus, working remotely on digital products 
+            and automation solutions.
+          </p>
+          <p>
+            Projects: Fishka Telegram Mini App, Content Distribution System, AI Workflow Experiments. 
+            Focus areas: Telegram ecosystem, product development, business operations, analytics and decision making, automation.
+          </p>
+        </section>
       </main>
     </div>
   );

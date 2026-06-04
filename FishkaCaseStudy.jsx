@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useEffect } from "react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 
@@ -60,6 +60,76 @@ export default function FishkaCaseStudy() {
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const yParallax = useTransform(scrollYProgress, [0, 1], [0, 40]);
   const fadeOut = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
+
+  useEffect(() => {
+    // Update page metadata
+    document.title = "Fishka Case Study | Alexey Raikov (Ovraik)";
+    
+    // Update meta description
+    const metaDescription = document.querySelector('meta[name="description"]');
+    if (metaDescription) {
+      metaDescription.setAttribute('content', 'Case study of Fishka - a Telegram Mini App marketplace for streetwear resellers and independent brands. Built by Alexey Raikov (Ovraik).');
+    }
+    
+    // Update canonical URL
+    const canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) {
+      canonical.setAttribute('href', 'https://ovraik.com/fishka');
+    }
+    
+    // Update Open Graph tags
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) {
+      ogTitle.setAttribute('content', 'Fishka Case Study | Alexey Raikov (Ovraik)');
+    }
+    
+    const ogDescription = document.querySelector('meta[property="og:description"]');
+    if (ogDescription) {
+      ogDescription.setAttribute('content', 'Case study of Fishka - a Telegram Mini App marketplace for streetwear resellers and independent brands. Built by Alexey Raikov (Ovraik).');
+    }
+    
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) {
+      ogUrl.setAttribute('content', 'https://ovraik.com/fishka');
+    }
+    
+    // Update Twitter Card tags
+    const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+    if (twitterTitle) {
+      twitterTitle.setAttribute('content', 'Fishka Case Study | Alexey Raikov (Ovraik)');
+    }
+    
+    const twitterDescription = document.querySelector('meta[name="twitter:description"]');
+    if (twitterDescription) {
+      twitterDescription.setAttribute('content', 'Case study of Fishka - a Telegram Mini App marketplace for streetwear resellers and independent brands. Built by Alexey Raikov (Ovraik).');
+    }
+    
+    // Cleanup: restore original metadata when component unmounts
+    return () => {
+      document.title = "Alexey Raikov (Ovraik) | Product Builder, Automation Developer & Telegram Mini App Creator";
+      if (metaDescription) {
+        metaDescription.setAttribute('content', 'Personal website of Alexey Raikov (Ovraik). Building Telegram Mini Apps, automation systems, AI workflows, internal tools and digital products.');
+      }
+      if (canonical) {
+        canonical.setAttribute('href', 'https://ovraik.com/');
+      }
+      if (ogTitle) {
+        ogTitle.setAttribute('content', 'Alexey Raikov (Ovraik) | Product Builder, Automation Developer & Telegram Mini App Creator');
+      }
+      if (ogDescription) {
+        ogDescription.setAttribute('content', 'Personal website of Alexey Raikov (Ovraik). Building Telegram Mini Apps, automation systems, AI workflows, internal tools and digital products.');
+      }
+      if (ogUrl) {
+        ogUrl.setAttribute('content', 'https://ovraik.com/');
+      }
+      if (twitterTitle) {
+        twitterTitle.setAttribute('content', 'Alexey Raikov (Ovraik) | Product Builder, Automation Developer & Telegram Mini App Creator');
+      }
+      if (twitterDescription) {
+        twitterDescription.setAttribute('content', 'Personal website of Alexey Raikov (Ovraik). Building Telegram Mini Apps, automation systems, AI workflows, internal tools and digital products.');
+      }
+    };
+  }, []);
 
   return (
     <div style={{ background: tk.bg, minHeight: "100vh", position: "relative", overflowX: "hidden" }}>
