@@ -84,7 +84,7 @@ const Nav = ({ active }) => {
       }}
     >
       <div style={{
-        maxWidth: "960px", margin: "0 auto", padding: "0 24px",
+        maxWidth: "1200px", margin: "0 auto", padding: "0 40px",
         height: "52px", display: "flex", alignItems: "center", justifyContent: "space-between",
       }}>
         <a href="#" style={{ textDecoration: "none" }}>
@@ -166,7 +166,7 @@ const Hero = () => {
             textTransform: "uppercase", marginBottom: "36px",
           }}
         >
-          Belarus / Remote
+          Remote
         </motion.p>
 
         <motion.h1
@@ -268,10 +268,10 @@ const About = () => (
               Hi, I'm Alexey Raikov<br />(Ovraik).
             </h2>
             <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "15px", color: tk.sub, lineHeight: 1.75, margin: "0 0 16px" }}>
-              I'm a student at BNTU in Belarus. Outside university I spend most of my time building things — products, internal tools, automation workflows, and digital systems.
+              I build products, automation systems, and tools. Most of my time goes into taking ideas from zero to something usable — designing the product, writing code, and shipping.
             </p>
             <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "15px", color: tk.sub, lineHeight: 1.75, margin: 0 }}>
-              Most of what I know I learned by doing. Reading helps, but nothing clarifies an idea like trying to build it.
+              I'm also a student at BNTU, but most of what I know came from building things, not from lectures. Execution teaches faster than theory.
             </p>
           </div>
         </Reveal>
@@ -279,13 +279,13 @@ const About = () => (
         <Reveal delay={0.16}>
           <div>
             <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "15px", color: tk.sub, lineHeight: 1.75, margin: "0 0 16px" }}>
-              Over the last few years I've worked on marketplace products, automation systems, content workflows, and analytics tools. Some made it to an MVP. Some stayed as experiments. All of them taught me something.
+              I've built marketplace products, automation systems, content distribution tools, and analytics workflows. Some reached MVP. Some stayed experiments. Each one taught me how to ship faster and think clearer.
             </p>
             <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "15px", color: tk.sub, lineHeight: 1.75, margin: "0 0 24px" }}>
-              I enjoy turning vague ideas into working systems. Sometimes it's a product. Sometimes it's an automation or an internal tool. The part I find most satisfying is taking something from zero to a usable first version — and learning through the process.
+              What I care about: solving real problems, building systems that scale, and learning by doing. The best way to understand something is to build it.
             </p>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-              {["Product Development", "Automation", "Business Operations", "Financial Analysis", "Systems Thinking"].map(tag => (
+              {["Product Development", "Automation", "Business Operations", "Analytics", "Systems Thinking"].map(tag => (
                 <span key={tag} style={{
                   fontFamily: "'DM Mono',monospace", fontSize: "11px",
                   color: tk.muted, border: `1px solid ${tk.border}`,
@@ -308,7 +308,7 @@ const projects = [
     num: "01",
     title: "Fishka",
     category: "Marketplace · Mini App",
-    description: "A marketplace product built as a Telegram Mini App. I identified a gap in how buyers and sellers in a specific category connected, designed the product from scratch, and built it — covering product design, deal flow logic, payment integration, and the full Mini App implementation. Completed MVP. Currently paused.",
+    description: "Telegram Mini App marketplace connecting buyers and sellers. Built the full product — designed marketplace flows, implemented deal logic, integrated payments, and shipped MVP. Identified a market gap, validated it, and executed. Currently paused.",
     status: "Paused",
     tags: ["Product Design", "Marketplace", "Mini App", "Payments", "MVP"],
   },
@@ -316,7 +316,7 @@ const projects = [
     num: "02",
     title: "Content Distribution System",
     category: "Automation",
-    description: "A set of tools that automate how content gets published and distributed across platforms. Instead of repeating the same manual steps for each upload — formatting, scheduling, cross-posting to YouTube, TikTok, and other channels — the system handles it. Built to remove friction from a recurring operational task.",
+    description: "Automation system for multi-platform content publishing. Handles formatting, scheduling, and distribution across YouTube, TikTok, and other channels. Removes manual work from recurring publishing tasks. Built to save time and reduce errors.",
     status: "Ongoing",
     tags: ["Automation", "YouTube", "TikTok", "Publishing", "Workflow Design"],
   },
@@ -324,7 +324,7 @@ const projects = [
     num: "03",
     title: "AI Workflow Experiments",
     category: "Internal Tools",
-    description: "A personal collection of tools and automations that use AI to speed up recurring tasks — drafting, research, summarisation, and decision support. Not a product, just a working set of systems I use and keep improving as the tools get better.",
+    description: "Collection of AI-powered tools for productivity. Automates drafting, research, summarization, and decision support. Built for personal use, constantly improving. Focused on practical applications, not experimentation for its own sake.",
     status: "Ongoing",
     tags: ["AI", "Internal Tools", "Automation", "Productivity"],
   },
@@ -437,9 +437,9 @@ const focusCards = [
     desc: "How things actually run inside organizations. Process design, operational workflows, and removing the manual work that slows teams down.",
   },
   {
-    title: "Financial Analysis",
+    title: "Analytics & Decision Making",
     icon: "◇",
-    desc: "Exploring financial analysis, market research, and data-driven decision-making using Python and analytical tools. Learning how numbers inform business decisions.",
+    desc: "Using data to understand problems and make better decisions. Working with Python, analytical tools, and research to turn numbers into actionable insights.",
   },
   {
     title: "Automation",
@@ -472,13 +472,13 @@ const CurrentFocus = () => (
       </Reveal>
       <div className="focus-grid" style={{
         display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-        gap: "1px", background: tk.border, borderRadius: "10px", overflow: "hidden",
+        gap: "12px",
       }}>
         {focusCards.map((c, i) => (
           <Reveal key={c.title} delay={i * 0.07}>
             <motion.div
               whileHover={{ background: tk.surfaceHov }}
-              style={{ background: tk.surface, padding: "28px 24px", minHeight: "160px", transition: "background 0.2s" }}
+              style={{ background: tk.surface, padding: "28px 24px", minHeight: "160px", transition: "background 0.2s", border: `1px solid ${tk.border}`, borderRadius: "10px" }}
             >
               <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "16px", color: tk.accent, display: "block", marginBottom: "12px" }}>
                 {c.icon}
@@ -770,7 +770,7 @@ const Contact = () => (
             Alexey Raikov · Ovraik · 2026
           </span>
           <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", color: tk.muted }}>
-            Belarus / Remote
+            Remote
           </span>
         </div>
       </Reveal>
