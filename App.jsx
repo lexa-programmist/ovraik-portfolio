@@ -2,16 +2,16 @@ import { useState, useEffect, useRef } from "react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 
 // ─── TOKENS ──────────────────────────────────────────────────────────────────
-const t = {
-  bg: "#090C10",
-  surface: "#0E1218",
-  surfaceHover: "#131820",
-  border: "rgba(255,255,255,0.07)",
-  borderHover: "rgba(255,255,255,0.13)",
-  text: "#E2E5EC",
-  muted: "#4E5666",
-  sub: "#7C8592",
-  accent: "#3B82F6",
+const tk = {
+  bg:         "#090C10",
+  surface:    "#0E1218",
+  surfaceHov: "#131820",
+  border:     "rgba(255,255,255,0.07)",
+  borderHov:  "rgba(255,255,255,0.13)",
+  text:       "#E2E5EC",
+  muted:      "#4E5666",
+  sub:        "#7C8592",
+  accent:     "#3B82F6",
 };
 
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
@@ -28,13 +28,16 @@ const Reveal = ({ children, delay = 0, y = 18 }) => {
 };
 
 const Divider = () => (
-  <div style={{ height: "1px", background: t.border, margin: "0 auto", maxWidth: "960px" }} />
+  <div style={{ height: "1px", background: tk.border, margin: "0 auto", maxWidth: "960px" }} />
 );
 
 // ─── GRAIN ───────────────────────────────────────────────────────────────────
 const Grain = () => (
   <svg style={{ position: "fixed", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0, opacity: 0.022 }}>
-    <filter id="g"><feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="4" stitchTiles="stitch" /><feColorMatrix type="saturate" values="0" /></filter>
+    <filter id="g">
+      <feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="4" stitchTiles="stitch" />
+      <feColorMatrix type="saturate" values="0" />
+    </filter>
     <rect width="100%" height="100%" filter="url(#g)" />
   </svg>
 );
@@ -43,107 +46,93 @@ const Grain = () => (
 const Grid = () => (
   <div style={{
     position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0,
-    backgroundImage: `linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px)`,
+    backgroundImage: `linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px)`,
     backgroundSize: "72px 72px",
   }} />
 );
 
-// ─── CURSOR ───────────────────────────────────────────────────────────────────
-const Cursor = () => {
-  const [pos, setPos] = useState({ x: -100, y: -100 });
-  const [dot, setDot] = useState({ x: -100, y: -100 });
-  const [hov, setHov] = useState(false);
-  const posRef = useRef({ x: -100, y: -100 });
-
-  useEffect(() => {
-    const move = (e) => { posRef.current = { x: e.clientX, y: e.clientY }; setDot({ x: e.clientX, y: e.clientY }); };
-    const over = (e) => { if (e.target.closest("a,button")) setHov(true); };
-    const out  = (e) => { if (e.target.closest("a,button")) setHov(false); };
-    window.addEventListener("mousemove", move);
-    window.addEventListener("mouseover", over);
-    window.addEventListener("mouseout", out);
-    let raf;
-    const lerp = (a, b, n) => a + (b - a) * n;
-    const tick = () => { setPos(p => ({ x: lerp(p.x, posRef.current.x, 0.13), y: lerp(p.y, posRef.current.y, 0.13) })); raf = requestAnimationFrame(tick); };
-    raf = requestAnimationFrame(tick);
-    return () => { window.removeEventListener("mousemove", move); cancelAnimationFrame(raf); };
-  }, []);
-
-  return (
-    <>
-      <div style={{ position: "fixed", left: dot.x - 3, top: dot.y - 3, width: 6, height: 6, borderRadius: "50%", background: t.accent, pointerEvents: "none", zIndex: 9999 }} />
-      <div style={{ position: "fixed", left: pos.x - 18, top: pos.y - 18, width: 36, height: 36, borderRadius: "50%", border: `1px solid ${hov ? t.accent : "rgba(255,255,255,0.14)"}`, pointerEvents: "none", zIndex: 9999, transform: `scale(${hov ? 1.4 : 1})`, transition: "transform 0.25s, border-color 0.2s" }} />
-    </>
-  );
-};
-
 // ─── NAV ─────────────────────────────────────────────────────────────────────
+const navLinks = [
+  { label: "About",    id: "about"    },
+  { label: "Projects", id: "projects" },
+  { label: "Focus",    id: "focus"    },
+  { label: "Contact",  id: "contact"  },
+];
+
 const Nav = ({ active }) => {
   const [scrolled, setScrolled] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [open,     setOpen]     = useState(false);
+
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 32);
     window.addEventListener("scroll", h);
     return () => window.removeEventListener("scroll", h);
   }, []);
 
-  const links = [
-    { label: "About", id: "about" },
-    { label: "Projects", id: "projects" },
-    { label: "Focus", id: "focus" },
-    { label: "Contact", id: "contact" },
-  ];
-
   return (
     <motion.nav
       initial={{ opacity: 0, y: -12 }}
-      animate={{ opacity: 1, y: 0 }}
+      animate={{ opacity: 1,  y: 0  }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        background: scrolled ? "rgba(9,12,16,0.9)" : "transparent",
-        backdropFilter: scrolled ? "blur(16px)" : "none",
-        borderBottom: scrolled ? `1px solid ${t.border}` : "1px solid transparent",
+        background:     scrolled ? "rgba(9,12,16,0.9)"     : "transparent",
+        backdropFilter: scrolled ? "blur(16px)"            : "none",
+        borderBottom:   scrolled ? `1px solid ${tk.border}` : "1px solid transparent",
         transition: "all 0.35s ease",
       }}
     >
-      <div style={{ maxWidth: "960px", margin: "0 auto", padding: "0 24px", height: "52px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div style={{
+        maxWidth: "960px", margin: "0 auto", padding: "0 24px",
+        height: "52px", display: "flex", alignItems: "center", justifyContent: "space-between",
+      }}>
         <a href="#" style={{ textDecoration: "none" }}>
-          <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "13px", color: t.sub, letterSpacing: "0.04em" }}>ovraik</span>
+          <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "13px", color: tk.sub, letterSpacing: "0.04em" }}>
+            ovraik
+          </span>
         </a>
 
         {/* Desktop links */}
         <div className="nav-desktop" style={{ display: "flex", gap: "28px" }}>
-          {links.map(l => (
+          {navLinks.map(l => (
             <a key={l.id} href={`#${l.id}`} style={{
               fontFamily: "'DM Mono',monospace", fontSize: "12px",
-              color: active === l.id ? t.text : t.muted,
+              color: active === l.id ? tk.text : tk.muted,
               textDecoration: "none", letterSpacing: "0.04em",
               transition: "color 0.2s",
             }}>{l.label}</a>
           ))}
         </div>
 
-        {/* Mobile hamburger */}
+        {/* Mobile toggle */}
         <button
           className="nav-mobile"
           onClick={() => setOpen(o => !o)}
-          style={{ background: "none", border: `1px solid ${t.border}`, borderRadius: "6px", padding: "6px 10px", cursor: "pointer", display: "none" }}
+          style={{
+            background: "none", border: `1px solid ${tk.border}`, borderRadius: "6px",
+            padding: "6px 10px", cursor: "pointer", display: "none",
+          }}
         >
-          <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", color: t.sub, letterSpacing: "0.04em" }}>{open ? "✕" : "menu"}</span>
+          <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", color: tk.sub, letterSpacing: "0.04em" }}>
+            {open ? "✕" : "menu"}
+          </span>
         </button>
       </div>
 
       {/* Mobile drawer */}
       {open && (
-        <div style={{ background: "rgba(9,12,16,0.97)", borderTop: `1px solid ${t.border}`, padding: "16px 24px 20px", display: "flex", flexDirection: "column", gap: "16px" }}>
-          {links.map(l => (
+        <div style={{
+          background: "rgba(9,12,16,0.97)", borderTop: `1px solid ${tk.border}`,
+          padding: "16px 24px 20px", display: "flex", flexDirection: "column", gap: "0",
+        }}>
+          {navLinks.map(l => (
             <a key={l.id} href={`#${l.id}`} onClick={() => setOpen(false)} style={{
               fontFamily: "'DM Mono',monospace", fontSize: "13px",
-              color: active === l.id ? t.text : t.sub,
+              color: active === l.id ? tk.text : tk.sub,
               textDecoration: "none", letterSpacing: "0.04em",
-              padding: "8px 0",
-              borderBottom: `1px solid ${t.border}`,
+              padding: "12px 0",
+              borderBottom: `1px solid ${tk.border}`,
             }}>{l.label}</a>
           ))}
         </div>
@@ -156,18 +145,26 @@ const Nav = ({ active }) => {
 const Hero = () => {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
-  const yParallax = useTransform(scrollYProgress, [0, 1], [0, 60]);
+  const yParallax = useTransform(scrollYProgress, [0, 1],    [0, 60]);
   const fadeOut   = useTransform(scrollYProgress, [0, 0.55], [1, 0]);
 
   return (
-    <section ref={ref} id="hero" style={{ position: "relative", minHeight: "100vh", display: "flex", alignItems: "center", padding: "0 24px", overflow: "hidden" }}>
+    <section ref={ref} id="hero" style={{
+      position: "relative", minHeight: "100vh",
+      display: "flex", alignItems: "center",
+      padding: "0 24px", overflow: "hidden",
+    }}>
       <motion.div style={{ y: yParallax, opacity: fadeOut, maxWidth: "720px", width: "100%", position: "relative", zIndex: 1 }}>
 
         <motion.p
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15, duration: 0.5 }}
-          style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", color: t.muted, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "36px" }}
+          style={{
+            fontFamily: "'DM Mono',monospace", fontSize: "11px",
+            color: tk.muted, letterSpacing: "0.1em",
+            textTransform: "uppercase", marginBottom: "36px",
+          }}
         >
           Belarus / Remote
         </motion.p>
@@ -179,25 +176,28 @@ const Hero = () => {
           style={{
             fontFamily: "'Bricolage Grotesque',sans-serif",
             fontSize: "clamp(38px, 6vw, 72px)",
-            fontWeight: 700,
-            lineHeight: 1.08,
-            letterSpacing: "-0.035em",
-            color: t.text,
+            fontWeight: 700, lineHeight: 1.08,
+            letterSpacing: "-0.035em", color: tk.text,
             margin: "0 0 28px",
           }}
         >
           Building products,<br />
-          automation,<br />
-          <span style={{ color: t.sub }}>and Telegram ecosystems.</span>
+          systems,<br />
+          <span style={{ color: tk.sub }}>and useful tools.</span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.45, duration: 0.6 }}
-          style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "clamp(14px, 1.6vw, 17px)", color: t.sub, lineHeight: 1.7, maxWidth: "480px", margin: "0 0 44px" }}
+          style={{
+            fontFamily: "'DM Sans',sans-serif",
+            fontSize: "clamp(14px, 1.6vw, 17px)",
+            color: tk.sub, lineHeight: 1.7,
+            maxWidth: "480px", margin: "0 0 44px",
+          }}
         >
-          I build Telegram projects, automation systems, and digital products. Most of my work starts as an idea, then turns into a prototype, a workflow, or a real product.
+          I build products, automate workflows, and design systems that solve real problems. Most of my work starts as an idea and turns into something usable.
         </motion.p>
 
         <motion.div
@@ -208,31 +208,34 @@ const Hero = () => {
         >
           <a href="#projects" style={{
             display: "inline-flex", alignItems: "center", gap: "6px",
-            padding: "10px 20px", background: t.accent, color: "#fff",
+            padding: "10px 20px", background: tk.accent, color: "#fff",
             borderRadius: "7px", fontFamily: "'DM Mono',monospace", fontSize: "12px",
             letterSpacing: "0.02em", textDecoration: "none",
             transition: "opacity 0.2s, transform 0.2s",
           }}
             onMouseEnter={e => { e.currentTarget.style.opacity = "0.88"; e.currentTarget.style.transform = "translateY(-1px)"; }}
-            onMouseLeave={e => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.transform = "translateY(0)"; }}
+            onMouseLeave={e => { e.currentTarget.style.opacity = "1";    e.currentTarget.style.transform = "translateY(0)";    }}
           >
             View Projects
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
           </a>
           <a href="#contact" style={{
             display: "inline-flex", alignItems: "center",
-            padding: "10px 20px", background: "transparent", color: t.sub,
-            border: `1px solid ${t.border}`, borderRadius: "7px",
+            padding: "10px 20px", background: "transparent", color: tk.sub,
+            border: `1px solid ${tk.border}`, borderRadius: "7px",
             fontFamily: "'DM Mono',monospace", fontSize: "12px",
             letterSpacing: "0.02em", textDecoration: "none",
             transition: "border-color 0.2s, color 0.2s",
           }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = t.borderHover; e.currentTarget.style.color = t.text; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = t.border; e.currentTarget.style.color = t.sub; }}
+            onMouseEnter={e => { e.currentTarget.style.borderColor = tk.borderHov; e.currentTarget.style.color = tk.text; }}
+            onMouseLeave={e => { e.currentTarget.style.borderColor = tk.border;    e.currentTarget.style.color = tk.sub;  }}
           >
             Get In Touch
           </a>
         </motion.div>
+
       </motion.div>
     </section>
   );
@@ -244,7 +247,11 @@ const About = () => (
     <Divider />
     <div style={{ maxWidth: "960px", margin: "0 auto", paddingTop: "80px" }}>
       <Reveal>
-        <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", color: t.muted, letterSpacing: "0.1em", textTransform: "uppercase", display: "block", marginBottom: "40px" }}>
+        <span style={{
+          fontFamily: "'DM Mono',monospace", fontSize: "11px",
+          color: tk.muted, letterSpacing: "0.1em",
+          textTransform: "uppercase", display: "block", marginBottom: "40px",
+        }}>
           About
         </span>
       </Reveal>
@@ -252,29 +259,38 @@ const About = () => (
       <div className="about-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "64px" }}>
         <Reveal delay={0.08}>
           <div>
-            <h2 style={{ fontFamily: "'Bricolage Grotesque',sans-serif", fontSize: "clamp(22px, 3vw, 32px)", fontWeight: 700, letterSpacing: "-0.03em", color: t.text, margin: "0 0 20px", lineHeight: 1.2 }}>
+            <h2 style={{
+              fontFamily: "'Bricolage Grotesque',sans-serif",
+              fontSize: "clamp(22px, 3vw, 32px)", fontWeight: 700,
+              letterSpacing: "-0.03em", color: tk.text,
+              margin: "0 0 20px", lineHeight: 1.2,
+            }}>
               Hi, I'm Alexey Raikov<br />(Ovraik).
             </h2>
-            <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "15px", color: t.sub, lineHeight: 1.75, margin: "0 0 16px" }}>
-              I'm a student at BNTU in Belarus. Outside university I spend most of my time building things — Telegram projects, automation systems, digital products, and tools for internal use.
+            <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "15px", color: tk.sub, lineHeight: 1.75, margin: "0 0 16px" }}>
+              I'm a student at BNTU in Belarus. Outside university I spend most of my time building things — products, internal tools, automation workflows, and digital systems.
             </p>
-            <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "15px", color: t.sub, lineHeight: 1.75, margin: 0 }}>
-              Most of what I know comes from building things myself. I learn by doing.
+            <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "15px", color: tk.sub, lineHeight: 1.75, margin: 0 }}>
+              Most of what I know I learned by doing. Reading helps, but nothing clarifies an idea like trying to build it.
             </p>
           </div>
         </Reveal>
 
         <Reveal delay={0.16}>
           <div>
-            <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "15px", color: t.sub, lineHeight: 1.75, margin: "0 0 16px" }}>
-              Over the last few years I've experimented with Telegram bots, Mini Apps, automation workflows, AI tools, crypto analytics, and product ideas.
+            <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "15px", color: tk.sub, lineHeight: 1.75, margin: "0 0 16px" }}>
+              Over the last few years I've worked on marketplace products, automation systems, content workflows, and analytics tools. Some made it to an MVP. Some stayed as experiments. All of them taught me something.
             </p>
-            <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "15px", color: t.sub, lineHeight: 1.75, margin: "0 0 24px" }}>
-              I enjoy taking an idea from zero to a working product and learning through execution.
+            <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "15px", color: tk.sub, lineHeight: 1.75, margin: "0 0 24px" }}>
+              I enjoy turning vague ideas into working systems. Sometimes it's a product. Sometimes it's an automation or an internal tool. The part I find most satisfying is taking something from zero to a usable first version — and learning through the process.
             </p>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
-              {["Telegram Ecosystem", "Automation", "Product Development", "Financial Analytics", "AI Tools"].map(tag => (
-                <span key={tag} style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", color: t.muted, border: `1px solid ${t.border}`, borderRadius: "4px", padding: "3px 9px", letterSpacing: "0.04em" }}>
+              {["Product Development", "Automation", "Business Operations", "Financial Analysis", "Systems Thinking"].map(tag => (
+                <span key={tag} style={{
+                  fontFamily: "'DM Mono',monospace", fontSize: "11px",
+                  color: tk.muted, border: `1px solid ${tk.border}`,
+                  borderRadius: "4px", padding: "3px 9px", letterSpacing: "0.04em",
+                }}>
                   {tag}
                 </span>
               ))}
@@ -291,26 +307,26 @@ const projects = [
   {
     num: "01",
     title: "Fishka",
-    category: "Telegram Mini App · Marketplace",
-    description: "A marketplace infrastructure project built inside the Telegram ecosystem. Covered the full product lifecycle — marketplace mechanics, deal flows, payment integration, and Telegram Mini App implementation. Paused due to limited resources and current priorities.",
+    category: "Marketplace · Mini App",
+    description: "A marketplace product built as a Telegram Mini App. I identified a gap in how buyers and sellers in a specific category connected, designed the product from scratch, and built it — covering product design, deal flow logic, payment integration, and the full Mini App implementation. Completed MVP. Currently paused.",
     status: "Paused",
-    tags: ["Telegram Mini App", "Marketplace", "Product Design", "Payments"],
+    tags: ["Product Design", "Marketplace", "Mini App", "Payments", "MVP"],
   },
   {
     num: "02",
-    title: "Content Distribution Systems",
+    title: "Content Distribution System",
     category: "Automation",
-    description: "A set of automation tools for cross-platform content distribution. Covers YouTube and TikTok publishing pipelines, workflow automation, repetitive task reduction, and internal tooling for scalable content operations.",
+    description: "A set of tools that automate how content gets published and distributed across platforms. Instead of repeating the same manual steps for each upload — formatting, scheduling, cross-posting to YouTube, TikTok, and other channels — the system handles it. Built to remove friction from a recurring operational task.",
     status: "Ongoing",
-    tags: ["YouTube", "TikTok", "Pipelines", "Automation", "Internal Tools"],
+    tags: ["Automation", "YouTube", "TikTok", "Publishing", "Workflow Design"],
   },
   {
     num: "03",
-    title: "AI Tooling Experiments",
+    title: "AI Workflow Experiments",
     category: "Internal Tools",
-    description: "A growing collection of AI-assisted tools, automations, and workflow experiments focused on productivity and faster decision-making. Built for personal use and ongoing exploration.",
+    description: "A personal collection of tools and automations that use AI to speed up recurring tasks — drafting, research, summarisation, and decision support. Not a product, just a working set of systems I use and keep improving as the tools get better.",
     status: "Ongoing",
-    tags: ["AI", "Productivity", "Workflow", "Experimentation"],
+    tags: ["AI", "Internal Tools", "Automation", "Productivity"],
   },
 ];
 
@@ -323,33 +339,53 @@ const ProjectCard = ({ num, title, category, description, status, tags, delay })
         onHoverStart={() => setHov(true)}
         onHoverEnd={() => setHov(false)}
         style={{
-          background: hov ? t.surfaceHover : t.surface,
-          border: `1px solid ${hov ? t.borderHover : t.border}`,
-          borderRadius: "10px",
-          padding: "32px",
+          background: hov ? tk.surfaceHov : tk.surface,
+          border: `1px solid ${hov ? tk.borderHov : tk.border}`,
+          borderRadius: "10px", padding: "32px",
           transition: "all 0.22s ease",
         }}
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "20px" }}>
-          <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", color: t.muted, letterSpacing: "0.08em" }}>Project {num}</span>
+          <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", color: tk.muted, letterSpacing: "0.08em" }}>
+            Project {num}
+          </span>
           <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-            <span style={{ width: "5px", height: "5px", borderRadius: "50%", background: ongoing ? "#22c55e" : t.muted, display: "inline-block" }} />
-            <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", color: t.muted, letterSpacing: "0.05em" }}>{status}</span>
+            <span style={{
+              width: "5px", height: "5px", borderRadius: "50%",
+              background: ongoing ? "#22c55e" : tk.muted,
+              display: "inline-block",
+            }} />
+            <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", color: tk.muted, letterSpacing: "0.05em" }}>
+              {status}
+            </span>
           </div>
         </div>
 
-        <h3 style={{ fontFamily: "'Bricolage Grotesque',sans-serif", fontSize: "clamp(20px, 2.5vw, 26px)", fontWeight: 700, letterSpacing: "-0.025em", color: t.text, margin: "0 0 6px" }}>
+        <h3 style={{
+          fontFamily: "'Bricolage Grotesque',sans-serif",
+          fontSize: "clamp(20px, 2.5vw, 26px)", fontWeight: 700,
+          letterSpacing: "-0.025em", color: tk.text, margin: "0 0 6px",
+        }}>
           {title}
         </h3>
-        <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", color: t.accent, letterSpacing: "0.06em", display: "block", marginBottom: "16px" }}>
+        <span style={{
+          fontFamily: "'DM Mono',monospace", fontSize: "11px",
+          color: tk.accent, letterSpacing: "0.06em",
+          display: "block", marginBottom: "16px",
+        }}>
           {category}
         </span>
-        <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "14px", color: t.sub, lineHeight: 1.75, margin: "0 0 20px" }}>
+        <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "14px", color: tk.sub, lineHeight: 1.75, margin: "0 0 20px" }}>
           {description}
         </p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: "6px" }}>
           {tags.map(tag => (
-            <span key={tag} style={{ fontFamily: "'DM Mono',monospace", fontSize: "10px", color: t.muted, background: "rgba(255,255,255,0.03)", border: `1px solid ${t.border}`, borderRadius: "4px", padding: "2px 7px", letterSpacing: "0.04em" }}>
+            <span key={tag} style={{
+              fontFamily: "'DM Mono',monospace", fontSize: "10px",
+              color: tk.muted, background: "rgba(255,255,255,0.03)",
+              border: `1px solid ${tk.border}`, borderRadius: "4px",
+              padding: "2px 7px", letterSpacing: "0.04em",
+            }}>
               {tag}
             </span>
           ))}
@@ -365,10 +401,18 @@ const Projects = () => (
     <div style={{ maxWidth: "960px", margin: "0 auto", paddingTop: "80px" }}>
       <Reveal>
         <div style={{ marginBottom: "48px" }}>
-          <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", color: t.muted, letterSpacing: "0.1em", textTransform: "uppercase", display: "block", marginBottom: "14px" }}>
+          <span style={{
+            fontFamily: "'DM Mono',monospace", fontSize: "11px",
+            color: tk.muted, letterSpacing: "0.1em",
+            textTransform: "uppercase", display: "block", marginBottom: "14px",
+          }}>
             Selected Projects
           </span>
-          <h2 style={{ fontFamily: "'Bricolage Grotesque',sans-serif", fontSize: "clamp(22px, 3vw, 32px)", fontWeight: 700, letterSpacing: "-0.03em", color: t.text, margin: 0 }}>
+          <h2 style={{
+            fontFamily: "'Bricolage Grotesque',sans-serif",
+            fontSize: "clamp(22px, 3vw, 32px)", fontWeight: 700,
+            letterSpacing: "-0.03em", color: tk.text, margin: 0,
+          }}>
             Things I've built or am building.
           </h2>
         </div>
@@ -382,10 +426,26 @@ const Projects = () => (
 
 // ─── CURRENT FOCUS ────────────────────────────────────────────────────────────
 const focusCards = [
-  { title: "Telegram Ecosystem", icon: "✦", desc: "Building Mini Apps, bots, marketplaces, and tools inside Telegram. Most of my recent product work lives here." },
-  { title: "Automation", icon: "◈", desc: "Designing workflows and reducing repetitive work through automation. Finding the right abstraction to handle recurring tasks." },
-  { title: "Financial Analytics", icon: "◇", desc: "Using Python and data analysis to understand markets and businesses. Unit economics, financial modeling, signal extraction." },
-  { title: "AI-Assisted Development", icon: "◉", desc: "Building products faster using AI as a development tool — not a gimmick. Integrating AI into real workflows and systems." },
+  {
+    title: "Product Development",
+    icon: "✦",
+    desc: "Taking ideas from zero to a working product. I'm interested in the full arc — identifying a problem, shaping a solution, and building something usable.",
+  },
+  {
+    title: "Business Operations",
+    icon: "◈",
+    desc: "How things actually run inside organizations. Process design, operational workflows, and removing the manual work that slows teams down.",
+  },
+  {
+    title: "Financial Analysis",
+    icon: "◇",
+    desc: "Exploring financial analysis, market research, and data-driven decision-making using Python and analytical tools. Learning how numbers inform business decisions.",
+  },
+  {
+    title: "Automation",
+    icon: "◉",
+    desc: "Building systems that handle recurring tasks reliably. The goal is always the same: less manual work, more consistent output.",
+  },
 ];
 
 const CurrentFocus = () => (
@@ -394,24 +454,44 @@ const CurrentFocus = () => (
     <div style={{ maxWidth: "960px", margin: "0 auto", paddingTop: "80px" }}>
       <Reveal>
         <div style={{ marginBottom: "48px" }}>
-          <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", color: t.muted, letterSpacing: "0.1em", textTransform: "uppercase", display: "block", marginBottom: "14px" }}>
+          <span style={{
+            fontFamily: "'DM Mono',monospace", fontSize: "11px",
+            color: tk.muted, letterSpacing: "0.1em",
+            textTransform: "uppercase", display: "block", marginBottom: "14px",
+          }}>
             Current Focus
           </span>
-          <h2 style={{ fontFamily: "'Bricolage Grotesque',sans-serif", fontSize: "clamp(22px, 3vw, 32px)", fontWeight: 700, letterSpacing: "-0.03em", color: t.text, margin: 0 }}>
-            What I'm working on right now.
+          <h2 style={{
+            fontFamily: "'Bricolage Grotesque',sans-serif",
+            fontSize: "clamp(22px, 3vw, 32px)", fontWeight: 700,
+            letterSpacing: "-0.03em", color: tk.text, margin: 0,
+          }}>
+            What I'm working on and thinking about.
           </h2>
         </div>
       </Reveal>
-      <div className="focus-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "1px", background: t.border, borderRadius: "10px", overflow: "hidden" }}>
+      <div className="focus-grid" style={{
+        display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+        gap: "1px", background: tk.border, borderRadius: "10px", overflow: "hidden",
+      }}>
         {focusCards.map((c, i) => (
           <Reveal key={c.title} delay={i * 0.07}>
             <motion.div
-              whileHover={{ background: t.surfaceHover }}
-              style={{ background: t.surface, padding: "28px 24px", minHeight: "160px", transition: "background 0.2s" }}
+              whileHover={{ background: tk.surfaceHov }}
+              style={{ background: tk.surface, padding: "28px 24px", minHeight: "160px", transition: "background 0.2s" }}
             >
-              <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "16px", color: t.accent, display: "block", marginBottom: "12px" }}>{c.icon}</span>
-              <h3 style={{ fontFamily: "'Bricolage Grotesque',sans-serif", fontSize: "15px", fontWeight: 600, color: t.text, margin: "0 0 8px", letterSpacing: "-0.01em" }}>{c.title}</h3>
-              <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "13px", color: t.muted, lineHeight: 1.65, margin: 0 }}>{c.desc}</p>
+              <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "16px", color: tk.accent, display: "block", marginBottom: "12px" }}>
+                {c.icon}
+              </span>
+              <h3 style={{
+                fontFamily: "'Bricolage Grotesque',sans-serif", fontSize: "15px",
+                fontWeight: 600, color: tk.text, margin: "0 0 8px", letterSpacing: "-0.01em",
+              }}>
+                {c.title}
+              </h3>
+              <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "13px", color: tk.muted, lineHeight: 1.65, margin: 0 }}>
+                {c.desc}
+              </p>
             </motion.div>
           </Reveal>
         ))}
@@ -422,12 +502,30 @@ const CurrentFocus = () => (
 
 // ─── CURRENTLY EXPLORING ─────────────────────────────────────────────────────
 const exploringItems = [
-  { title: "Product Development", desc: "Turning messy problems into something that works. Covering design, logic, iteration, and shipping." },
-  { title: "Telegram Mini Apps", desc: "Exploring what's possible inside Telegram's growing ecosystem for products and marketplaces." },
-  { title: "Business Operations", desc: "How things actually run inside organizations — process design, tooling, and operational efficiency." },
-  { title: "Automation Systems", desc: "Replacing manual repetition with reliable systems. More output, less overhead." },
-  { title: "Startup Ecosystems", desc: "How companies form, iterate, and grow. Early-stage patterns, product-market fit, and venture dynamics." },
-  { title: "Systems Thinking", desc: "Modeling complex situations to find leverage points. Thinking in loops rather than lines." },
+  {
+    title: "Product Development",
+    desc: "Turning messy, undefined problems into structured products. Design, iteration, and shipping — not just planning.",
+  },
+  {
+    title: "Business Operations",
+    desc: "How teams and processes actually function at scale. Where things break, where they slow down, and how to fix both.",
+  },
+  {
+    title: "Automation",
+    desc: "Replacing manual, repetitive work with systems that run reliably. The goal is leverage — same effort, better output.",
+  },
+  {
+    title: "Startup Dynamics",
+    desc: "How early-stage companies form, make decisions, and find traction. I'm interested in the operational and product side.",
+  },
+  {
+    title: "Systems Thinking",
+    desc: "Modeling how things are connected. Finding leverage points instead of just treating symptoms.",
+  },
+  {
+    title: "Financial Analysis",
+    desc: "Using data and analytical tools to understand businesses and markets. How numbers translate into decisions.",
+  },
 ];
 
 const Exploring = () => (
@@ -436,23 +534,41 @@ const Exploring = () => (
     <div style={{ maxWidth: "960px", margin: "0 auto", paddingTop: "80px" }}>
       <Reveal>
         <div style={{ marginBottom: "48px" }}>
-          <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", color: t.muted, letterSpacing: "0.1em", textTransform: "uppercase", display: "block", marginBottom: "14px" }}>
+          <span style={{
+            fontFamily: "'DM Mono',monospace", fontSize: "11px",
+            color: tk.muted, letterSpacing: "0.1em",
+            textTransform: "uppercase", display: "block", marginBottom: "14px",
+          }}>
             Currently Exploring
           </span>
-          <h2 style={{ fontFamily: "'Bricolage Grotesque',sans-serif", fontSize: "clamp(22px, 3vw, 32px)", fontWeight: 700, letterSpacing: "-0.03em", color: t.text, margin: 0 }}>
+          <h2 style={{
+            fontFamily: "'Bricolage Grotesque',sans-serif",
+            fontSize: "clamp(22px, 3vw, 32px)", fontWeight: 700,
+            letterSpacing: "-0.03em", color: tk.text, margin: 0,
+          }}>
             Topics I keep coming back to.
           </h2>
         </div>
       </Reveal>
-      <div className="explore-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "1px", background: t.border, borderRadius: "10px", overflow: "hidden" }}>
+      <div className="explore-grid" style={{
+        display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
+        gap: "1px", background: tk.border, borderRadius: "10px", overflow: "hidden",
+      }}>
         {exploringItems.map((item, i) => (
           <Reveal key={item.title} delay={i * 0.05}>
             <motion.div
-              whileHover={{ background: t.surfaceHover }}
-              style={{ background: t.surface, padding: "24px 22px", transition: "background 0.2s" }}
+              whileHover={{ background: tk.surfaceHov }}
+              style={{ background: tk.surface, padding: "24px 22px", transition: "background 0.2s" }}
             >
-              <h3 style={{ fontFamily: "'Bricolage Grotesque',sans-serif", fontSize: "14px", fontWeight: 600, color: t.text, margin: "0 0 7px", letterSpacing: "-0.01em" }}>{item.title}</h3>
-              <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "13px", color: t.muted, lineHeight: 1.65, margin: 0 }}>{item.desc}</p>
+              <h3 style={{
+                fontFamily: "'Bricolage Grotesque',sans-serif", fontSize: "14px",
+                fontWeight: 600, color: tk.text, margin: "0 0 7px", letterSpacing: "-0.01em",
+              }}>
+                {item.title}
+              </h3>
+              <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "13px", color: tk.muted, lineHeight: 1.65, margin: 0 }}>
+                {item.desc}
+              </p>
             </motion.div>
           </Reveal>
         ))}
@@ -463,10 +579,21 @@ const Exploring = () => (
 
 // ─── CONTACT ─────────────────────────────────────────────────────────────────
 const contactLinks = [
-  { label: "Telegram", handle: "@ovraik", href: "https://t.me/ovraik" },
-  { label: "GitHub", handle: "github.com/ovraik", href: "https://github.com/ovraik" },
-  { label: "LinkedIn", handle: "linkedin.com/in/ovraik", href: "#" },
-  { label: "Email", handle: "hello@ovraik.com", href: "mailto:hello@ovraik.com" },
+  {
+    label:  "Telegram",
+    handle: "@ovraik",
+    href:   "https://t.me/ovraik",
+  },
+  {
+    label:  "LinkedIn",
+    handle: "Alexey Raikov",
+    href:   "https://www.linkedin.com/in/alexey-raikov-20224228a?utm_source=share_via&utm_content=profile&utm_medium=member_ios",
+  },
+  {
+    label:  "Email",
+    handle: "ovraikin@gmail.com",
+    href:   "mailto:ovraikin@gmail.com",
+  },
 ];
 
 const Contact = () => (
@@ -474,54 +601,84 @@ const Contact = () => (
     <Divider />
     <div style={{ maxWidth: "960px", margin: "0 auto", paddingTop: "80px" }}>
       <div className="contact-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "64px" }}>
+
+        {/* Left */}
         <Reveal>
           <div>
-            <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", color: t.muted, letterSpacing: "0.1em", textTransform: "uppercase", display: "block", marginBottom: "24px" }}>
+            <span style={{
+              fontFamily: "'DM Mono',monospace", fontSize: "11px",
+              color: tk.muted, letterSpacing: "0.1em",
+              textTransform: "uppercase", display: "block", marginBottom: "24px",
+            }}>
               Contact
             </span>
-            <h2 style={{ fontFamily: "'Bricolage Grotesque',sans-serif", fontSize: "clamp(26px, 3.5vw, 40px)", fontWeight: 700, letterSpacing: "-0.03em", color: t.text, margin: "0 0 16px", lineHeight: 1.1 }}>
+            <h2 style={{
+              fontFamily: "'Bricolage Grotesque',sans-serif",
+              fontSize: "clamp(26px, 3.5vw, 40px)", fontWeight: 700,
+              letterSpacing: "-0.03em", color: tk.text,
+              margin: "0 0 16px", lineHeight: 1.1,
+            }}>
               Let's talk.
             </h2>
-            <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "15px", color: t.sub, lineHeight: 1.7, margin: 0 }}>
-              Reach out if you have a project idea, want to collaborate, or just want to connect.
+            <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "15px", color: tk.sub, lineHeight: 1.7, margin: 0 }}>
+              Open to interesting projects, collaborations, or just a good conversation. Reach out directly.
             </p>
           </div>
         </Reveal>
 
+        {/* Right — contact rows */}
         <Reveal delay={0.1}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "2px", paddingTop: "4px" }}>
-            {contactLinks.map((l, i) => (
+          <div style={{ display: "flex", flexDirection: "column", paddingTop: "4px" }}>
+            {contactLinks.map((l) => (
               <motion.a
                 key={l.label}
                 href={l.href}
-                target="_blank"
+                target={l.href.startsWith("mailto") ? "_self" : "_blank"}
                 rel="noopener noreferrer"
                 whileHover={{ x: 3 }}
                 style={{
                   display: "flex", justifyContent: "space-between", alignItems: "center",
-                  padding: "14px 16px", borderRadius: "7px",
-                  border: "1px solid transparent",
+                  padding: "15px 16px",
+                  borderBottom: `1px solid ${tk.border}`,
                   textDecoration: "none",
-                  transition: "all 0.18s",
+                  transition: "background 0.18s",
                 }}
-                onMouseEnter={e => { e.currentTarget.style.background = t.surface; e.currentTarget.style.borderColor = t.border; }}
-                onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.borderColor = "transparent"; }}
+                onMouseEnter={e => { e.currentTarget.style.background = tk.surface; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
               >
-                <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
-                  <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", color: t.muted, minWidth: "60px" }}>{l.label}</span>
-                  <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "14px", color: t.text }}>{l.handle}</span>
+                <div style={{ display: "flex", gap: "24px", alignItems: "center" }}>
+                  <span style={{
+                    fontFamily: "'DM Mono',monospace", fontSize: "11px",
+                    color: tk.muted, minWidth: "64px", letterSpacing: "0.04em",
+                  }}>
+                    {l.label}
+                  </span>
+                  <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "14px", color: tk.text }}>
+                    {l.handle}
+                  </span>
                 </div>
-                <span style={{ color: t.muted, fontSize: "14px" }}>↗</span>
+                <span style={{ color: tk.muted, fontSize: "13px" }}>↗</span>
               </motion.a>
             ))}
           </div>
         </Reveal>
+
       </div>
 
+      {/* Footer */}
       <Reveal delay={0.15}>
-        <div style={{ marginTop: "72px", paddingTop: "24px", borderTop: `1px solid ${t.border}`, display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "12px" }}>
-          <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", color: t.muted }}>Alexey Raikov · Ovraik · 2026</span>
-          <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", color: t.muted }}>Belarus / Remote</span>
+        <div style={{
+          marginTop: "72px", paddingTop: "24px",
+          borderTop: `1px solid ${tk.border}`,
+          display: "flex", justifyContent: "space-between",
+          flexWrap: "wrap", gap: "12px",
+        }}>
+          <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", color: tk.muted }}>
+            Alexey Raikov · Ovraik · 2026
+          </span>
+          <span style={{ fontFamily: "'DM Mono',monospace", fontSize: "11px", color: tk.muted }}>
+            Belarus / Remote
+          </span>
         </div>
       </Reveal>
     </div>
@@ -542,36 +699,31 @@ export default function App() {
   }, []);
 
   return (
-    <div style={{ background: t.bg, minHeight: "100vh", position: "relative", overflowX: "hidden", cursor: "none" }}>
+    <div style={{ background: tk.bg, minHeight: "100vh", position: "relative", overflowX: "hidden" }}>
       <style>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; }
-        body, a { cursor: none !important; }
         ::selection { background: rgba(59,130,246,0.2); color: #E2E5EC; }
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.07); border-radius: 2px; }
 
-        /* Responsive nav */
         @media (max-width: 640px) {
           .nav-desktop { display: none !important; }
           .nav-mobile  { display: flex !important; }
         }
-
-        /* About 2-col → 1-col */
         @media (max-width: 720px) {
-          .about-grid    { grid-template-columns: 1fr !important; gap: 28px !important; }
-          .contact-grid  { grid-template-columns: 1fr !important; gap: 40px !important; }
-          .focus-grid    { grid-template-columns: 1fr 1fr !important; }
+          .about-grid   { grid-template-columns: 1fr !important; gap: 28px !important; }
+          .contact-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+          .focus-grid   { grid-template-columns: 1fr 1fr !important; }
         }
         @media (max-width: 480px) {
-          .focus-grid    { grid-template-columns: 1fr !important; }
-          .explore-grid  { grid-template-columns: 1fr !important; }
+          .focus-grid   { grid-template-columns: 1fr !important; }
+          .explore-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
 
       <Grain />
       <Grid />
-      <Cursor />
       <Nav active={active} />
 
       <main style={{ position: "relative", zIndex: 1, maxWidth: "100%" }}>
