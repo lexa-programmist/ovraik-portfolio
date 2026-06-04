@@ -587,6 +587,7 @@ const contactLinks = [
   {
     label:  "LinkedIn",
     handle: "Alexey Raikov",
+    secondary: true,
     href:   "https://www.linkedin.com/in/alexey-raikov-20224228a?utm_source=share_via&utm_content=profile&utm_medium=member_ios",
   },
   {
