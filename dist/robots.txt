@@ -1,0 +1,8 @@
+# robots.txt for ovraik.com
+# Allow all crawlers full access
+
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://ovraik.com/sitemap.xml

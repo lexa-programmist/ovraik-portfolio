@@ -1,0 +1,12 @@
+{
+  "name": "Alexey Raikov — Ovraik",
+  "short_name": "Ovraik",
+  "description": "Business Operations, Product Operations, Startup Operations, AI Automation and Process Optimization.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#090C10",
+  "theme_color": "#090C10",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
