@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
+import BusinessCard from "./BusinessCard";
 
 // ─── TOKENS ──────────────────────────────────────────────────────────────────
 const tk = {
@@ -153,88 +154,119 @@ const Hero = () => {
     <section ref={ref} id="hero" style={{
       position: "relative", minHeight: "100vh",
       display: "flex", alignItems: "center",
-      padding: "0 24px", overflow: "hidden",
+      padding: "0 40px", overflow: "hidden",
     }}>
-      <motion.div style={{ y: yParallax, opacity: fadeOut, maxWidth: "720px", width: "100%", position: "relative", zIndex: 1 }}>
+      <motion.div
+        style={{ y: yParallax, opacity: fadeOut, width: "100%", position: "relative", zIndex: 1 }}
+        className="hero-inner"
+      >
+        {/* Two-column layout: left = text, right = card */}
+        <div className="hero-layout">
 
-        <motion.p
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15, duration: 0.5 }}
-          style={{
-            fontFamily: "'DM Mono',monospace", fontSize: "11px",
-            color: tk.muted, letterSpacing: "0.1em",
-            textTransform: "uppercase", marginBottom: "36px",
-          }}
-        >
-          Remote
-        </motion.p>
+          {/* LEFT: hero text */}
+          <div className="hero-text">
+            <motion.p
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.15, duration: 0.5 }}
+              style={{
+                fontFamily: "'DM Mono',monospace", fontSize: "11px",
+                color: tk.muted, letterSpacing: "0.1em",
+                textTransform: "uppercase", marginBottom: "36px",
+              }}
+            >
+              Remote
+            </motion.p>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.28, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-          style={{
-            fontFamily: "'Bricolage Grotesque',sans-serif",
-            fontSize: "clamp(38px, 6vw, 72px)",
-            fontWeight: 700, lineHeight: 1.08,
-            letterSpacing: "-0.035em", color: tk.text,
-            margin: "0 0 28px",
-          }}
-        >
-          Building products,<br />
-          systems,<br />
-          <span style={{ color: tk.sub }}>and useful tools.</span>
-        </motion.h1>
+            <motion.h1
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.28, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+              style={{
+                fontFamily: "'Bricolage Grotesque',sans-serif",
+                fontSize: "clamp(38px, 5.5vw, 72px)",
+                fontWeight: 700, lineHeight: 1.08,
+                letterSpacing: "-0.035em", color: tk.text,
+                margin: "0 0 28px",
+              }}
+            >
+              Building products,<br />
+              systems,<br />
+              <span style={{ color: tk.sub }}>and useful tools.</span>
+            </motion.h1>
 
-        <motion.p
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.45, duration: 0.6 }}
+              style={{
+                fontFamily: "'DM Sans',sans-serif",
+                fontSize: "clamp(14px, 1.6vw, 17px)",
+                color: tk.sub, lineHeight: 1.7,
+                maxWidth: "480px", margin: "0 0 44px",
+              }}
+            >
+              I build products, automate workflows, and design systems that solve real problems. Most of my work starts as an idea and turns into something usable.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.58, duration: 0.5 }}
+              style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}
+            >
+              <a href="#projects" style={{
+                display: "inline-flex", alignItems: "center", gap: "6px",
+                padding: "10px 20px", background: tk.accent, color: "#fff",
+                borderRadius: "7px", fontFamily: "'DM Mono',monospace", fontSize: "12px",
+                letterSpacing: "0.02em", textDecoration: "none",
+                transition: "opacity 0.2s, transform 0.2s",
+              }}
+                onMouseEnter={e => { e.currentTarget.style.opacity = "0.88"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = "1";    e.currentTarget.style.transform = "translateY(0)";    }}
+              >
+                View Projects
+                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                  <path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </a>
+              <a href="#contact" style={{
+                display: "inline-flex", alignItems: "center",
+                padding: "10px 20px", background: "transparent", color: tk.sub,
+                border: `1px solid ${tk.border}`, borderRadius: "7px",
+                fontFamily: "'DM Mono',monospace", fontSize: "12px",
+                letterSpacing: "0.02em", textDecoration: "none",
+                transition: "border-color 0.2s, color 0.2s",
+              }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = tk.borderHov; e.currentTarget.style.color = tk.text; }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = tk.border;    e.currentTarget.style.color = tk.sub;  }}
+              >
+                Get In Touch
+              </a>
+            </motion.div>
+          </div>
+
+          {/* RIGHT: business card (desktop only — on mobile it goes below via CSS) */}
+          <motion.div
+            className="hero-card-desktop"
+            initial={{ opacity: 0, x: 24 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.6, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <BusinessCard />
+          </motion.div>
+
+        </div>
+
+        {/* MOBILE: card below hero text, above About */}
+        <motion.div
+          className="hero-card-mobile"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.45, duration: 0.6 }}
-          style={{
-            fontFamily: "'DM Sans',sans-serif",
-            fontSize: "clamp(14px, 1.6vw, 17px)",
-            color: tk.sub, lineHeight: 1.7,
-            maxWidth: "480px", margin: "0 0 44px",
-          }}
+          transition={{ delay: 0.65, duration: 0.6 }}
+          style={{ display: "none" }}
         >
-          I build products, automate workflows, and design systems that solve real problems. Most of my work starts as an idea and turns into something usable.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.58, duration: 0.5 }}
-          style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}
-        >
-          <a href="#projects" style={{
-            display: "inline-flex", alignItems: "center", gap: "6px",
-            padding: "10px 20px", background: tk.accent, color: "#fff",
-            borderRadius: "7px", fontFamily: "'DM Mono',monospace", fontSize: "12px",
-            letterSpacing: "0.02em", textDecoration: "none",
-            transition: "opacity 0.2s, transform 0.2s",
-          }}
-            onMouseEnter={e => { e.currentTarget.style.opacity = "0.88"; e.currentTarget.style.transform = "translateY(-1px)"; }}
-            onMouseLeave={e => { e.currentTarget.style.opacity = "1";    e.currentTarget.style.transform = "translateY(0)";    }}
-          >
-            View Projects
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-              <path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </a>
-          <a href="#contact" style={{
-            display: "inline-flex", alignItems: "center",
-            padding: "10px 20px", background: "transparent", color: tk.sub,
-            border: `1px solid ${tk.border}`, borderRadius: "7px",
-            fontFamily: "'DM Mono',monospace", fontSize: "12px",
-            letterSpacing: "0.02em", textDecoration: "none",
-            transition: "border-color 0.2s, color 0.2s",
-          }}
-            onMouseEnter={e => { e.currentTarget.style.borderColor = tk.borderHov; e.currentTarget.style.color = tk.text; }}
-            onMouseLeave={e => { e.currentTarget.style.borderColor = tk.border;    e.currentTarget.style.color = tk.sub;  }}
-          >
-            Get In Touch
-          </a>
+          <BusinessCard />
         </motion.div>
 
       </motion.div>
@@ -800,6 +832,17 @@ const Contact = () => (
 // ─── APP ─────────────────────────────────────────────────────────────────────
 export default function HomePage() {
   const [active, setActive] = useState("hero");
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.state?.scrollTo) {
+      const el = document.getElementById(location.state.scrollTo);
+      if (el) {
+        setTimeout(() => el.scrollIntoView({ behavior: "smooth" }), 80);
+      }
+      window.history.replaceState({}, "");
+    }
+  }, []);
 
   useEffect(() => {
     const obs = new IntersectionObserver(
@@ -814,7 +857,9 @@ export default function HomePage() {
     <div style={{ background: tk.bg, minHeight: "100vh", position: "relative", overflowX: "hidden" }}>
       <style>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
+        html, body { overflow-x: hidden; overflow-y: auto; height: auto; }
+        html { scroll-behavior: smooth; touch-action: pan-y; }
+        body { touch-action: pan-y; overscroll-behavior-y: auto; }
         ::selection { background: rgba(59,130,246,0.2); color: #E2E5EC; }
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.07); border-radius: 2px; }
@@ -822,6 +867,37 @@ export default function HomePage() {
         @media (max-width: 640px) {
           .nav-desktop { display: none !important; }
           .nav-mobile  { display: flex !important; }
+        }
+
+        /* Hero layout */
+        .hero-layout {
+          display: flex;
+          align-items: center;
+          gap: 48px;
+          width: 100%;
+        }
+        .hero-text {
+          flex: 1;
+          min-width: 0;
+          max-width: 600px;
+        }
+        .hero-card-desktop {
+          flex-shrink: 0;
+          width: 590px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .hero-card-mobile {
+          display: none !important;
+        }
+        @media (max-width: 1080px) {
+          .hero-card-desktop { width: 480px; }
+        }
+        @media (max-width: 900px) {
+          .hero-layout { flex-direction: column; align-items: flex-start; gap: 0; }
+          .hero-card-desktop { display: none !important; }
+          .hero-card-mobile  { display: flex !important; width: 100%; max-width: 590px; margin: 40px auto 0; }
         }
         @media (max-width: 720px) {
           .about-grid   { grid-template-columns: 1fr !important; gap: 28px !important; }

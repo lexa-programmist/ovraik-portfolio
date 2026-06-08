@@ -62,6 +62,10 @@ export default function FishkaCaseStudy() {
   const fadeOut = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, []);
+
+  useEffect(() => {
     // Update page metadata
     document.title = "Fishka Case Study | Alexey Raikov (Ovraik)";
     
@@ -135,7 +139,9 @@ export default function FishkaCaseStudy() {
     <div style={{ background: tk.bg, minHeight: "100vh", position: "relative", overflowX: "hidden" }}>
       <style>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
+        html, body { overflow-x: hidden; overflow-y: auto; height: auto; }
+        html { scroll-behavior: smooth; touch-action: pan-y; }
+        body { touch-action: pan-y; overscroll-behavior-y: auto; }
         ::selection { background: rgba(59,130,246,0.2); color: #E2E5EC; }
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.07); border-radius: 2px; }
@@ -157,7 +163,7 @@ export default function FishkaCaseStudy() {
       >
         <div style={{ padding: "0 40px", height: "52px", display: "flex", alignItems: "center" }}>
           <button
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/", { state: { scrollTo: "projects" } })}
             style={{
               background: "none", border: "none", cursor: "pointer",
               display: "flex", alignItems: "center", gap: "8px",
