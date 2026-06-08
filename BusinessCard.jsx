@@ -135,7 +135,8 @@ const Avatar = ({ src }) => (
           src={src}
           alt="Alexey Raikov"
           width="110" height="110"
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          draggable="false"
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", pointerEvents: "none" }}
           onError={e => {
             e.currentTarget.style.display = "none";
             e.currentTarget.nextSibling.style.display = "flex";

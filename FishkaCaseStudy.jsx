@@ -66,6 +66,27 @@ export default function FishkaCaseStudy() {
   }, []);
 
   useEffect(() => {
+    const blockCtx = e => e.preventDefault();
+    const blockKeys = e => {
+      const k = e.key;
+      if (k === "F12") { e.preventDefault(); return; }
+      if (e.ctrlKey || e.metaKey) {
+        if (["c","C","x","X","s","S","u","U","a","A"].includes(k)) { e.preventDefault(); return; }
+        if (e.shiftKey && ["i","I","j","J","c","C"].includes(k)) { e.preventDefault(); return; }
+      }
+    };
+    const blockDrag = e => e.preventDefault();
+    document.addEventListener("contextmenu", blockCtx);
+    document.addEventListener("keydown", blockKeys);
+    document.addEventListener("dragstart", blockDrag);
+    return () => {
+      document.removeEventListener("contextmenu", blockCtx);
+      document.removeEventListener("keydown", blockKeys);
+      document.removeEventListener("dragstart", blockDrag);
+    };
+  }, []);
+
+  useEffect(() => {
     // Update page metadata
     document.title = "Fishka Case Study | Alexey Raikov (Ovraik)";
     
@@ -142,7 +163,19 @@ export default function FishkaCaseStudy() {
         html, body { overflow-x: hidden; overflow-y: auto; height: auto; }
         html { scroll-behavior: smooth; touch-action: pan-y; }
         body { touch-action: pan-y; overscroll-behavior-y: auto; }
-        ::selection { background: rgba(59,130,246,0.2); color: #E2E5EC; }
+        html, body, p, h1, h2, h3, h4, h5, h6, span, div {
+          user-select: none;
+          -webkit-user-select: none;
+        }
+        a, button, input, textarea { user-select: auto; -webkit-user-select: auto; }
+        img {
+          user-select: none;
+          -webkit-user-select: none;
+          -webkit-user-drag: none;
+          pointer-events: none;
+        }
+        a img, button img { pointer-events: auto; }
+        ::selection { background: transparent; }
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.07); border-radius: 2px; }
       `}</style>

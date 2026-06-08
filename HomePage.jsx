@@ -148,7 +148,7 @@ const Hero = () => {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const yParallax = useTransform(scrollYProgress, [0, 1],    [0, 60]);
-  const fadeOut   = useTransform(scrollYProgress, [0, 0.55], [1, 0]);
+  const fadeOut   = useTransform(scrollYProgress, [0.4, 1], [1, 0]);
 
   return (
     <section ref={ref} id="hero" style={{
@@ -165,19 +165,6 @@ const Hero = () => {
 
           {/* LEFT: hero text */}
           <div className="hero-text">
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15, duration: 0.5 }}
-              style={{
-                fontFamily: "'DM Mono',monospace", fontSize: "11px",
-                color: tk.muted, letterSpacing: "0.1em",
-                textTransform: "uppercase", marginBottom: "36px",
-              }}
-            >
-              Remote
-            </motion.p>
-
             <motion.h1
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
@@ -853,6 +840,27 @@ export default function HomePage() {
     return () => obs.disconnect();
   }, []);
 
+  useEffect(() => {
+    const blockCtx = e => e.preventDefault();
+    const blockKeys = e => {
+      const k = e.key;
+      if (k === "F12") { e.preventDefault(); return; }
+      if (e.ctrlKey || e.metaKey) {
+        if (["c","C","x","X","s","S","u","U","a","A"].includes(k)) { e.preventDefault(); return; }
+        if (e.shiftKey && ["i","I","j","J","c","C"].includes(k)) { e.preventDefault(); return; }
+      }
+    };
+    const blockDrag = e => e.preventDefault();
+    document.addEventListener("contextmenu", blockCtx);
+    document.addEventListener("keydown", blockKeys);
+    document.addEventListener("dragstart", blockDrag);
+    return () => {
+      document.removeEventListener("contextmenu", blockCtx);
+      document.removeEventListener("keydown", blockKeys);
+      document.removeEventListener("dragstart", blockDrag);
+    };
+  }, []);
+
   return (
     <div style={{ background: tk.bg, minHeight: "100vh", position: "relative", overflowX: "hidden" }}>
       <style>{`
@@ -860,7 +868,19 @@ export default function HomePage() {
         html, body { overflow-x: hidden; overflow-y: auto; height: auto; }
         html { scroll-behavior: smooth; touch-action: pan-y; }
         body { touch-action: pan-y; overscroll-behavior-y: auto; }
-        ::selection { background: rgba(59,130,246,0.2); color: #E2E5EC; }
+        html, body, p, h1, h2, h3, h4, h5, h6, span, div {
+          user-select: none;
+          -webkit-user-select: none;
+        }
+        a, button, input, textarea { user-select: auto; -webkit-user-select: auto; }
+        img {
+          user-select: none;
+          -webkit-user-select: none;
+          -webkit-user-drag: none;
+          pointer-events: none;
+        }
+        a img, button img { pointer-events: auto; }
+        ::selection { background: transparent; }
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.07); border-radius: 2px; }
 
@@ -873,20 +893,21 @@ export default function HomePage() {
         .hero-layout {
           display: flex;
           align-items: center;
-          gap: 48px;
+          gap: 32px;
           width: 100%;
         }
         .hero-text {
           flex: 1;
           min-width: 0;
           max-width: 600px;
+          padding-left: 40px;
         }
         .hero-card-desktop {
           flex-shrink: 0;
-          width: 780px;
+          width: 700px;
           display: flex;
           align-items: center;
-          justify-content: center;
+          justify-content: flex-end;
         }
         .hero-card-mobile {
           display: none !important;
@@ -899,6 +920,7 @@ export default function HomePage() {
         }
         @media (max-width: 900px) {
           .hero-layout { flex-direction: column; align-items: flex-start; gap: 0; }
+          .hero-text { padding-left: 0; }
           .hero-card-desktop { display: none !important; }
           .hero-card-mobile  { display: flex !important; width: 100%; max-width: 100%; margin: 36px 0 0; }
         }
