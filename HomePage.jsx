@@ -893,21 +893,22 @@ export default function HomePage() {
         .hero-layout {
           display: flex;
           align-items: center;
-          gap: 32px;
+          gap: 40px;
           width: 100%;
+          max-width: 1400px;
+          margin: 0 auto;
         }
         .hero-text {
           flex: 1;
           min-width: 0;
-          max-width: 600px;
-          padding-left: 40px;
+          max-width: 520px;
         }
         .hero-card-desktop {
-          flex-shrink: 0;
-          width: 700px;
+          flex: 1;
           display: flex;
           align-items: center;
-          justify-content: flex-end;
+          justify-content: center;
+          min-width: 0;
         }
         .hero-card-mobile {
           display: none !important;
@@ -919,8 +920,7 @@ export default function HomePage() {
           .hero-card-desktop { width: 560px; }
         }
         @media (max-width: 900px) {
-          .hero-layout { flex-direction: column; align-items: flex-start; gap: 0; }
-          .hero-text { padding-left: 0; }
+          .hero-layout { flex-direction: column; align-items: flex-start; gap: 0; max-width: 100%; margin: 0; }
           .hero-card-desktop { display: none !important; }
           .hero-card-mobile  { display: flex !important; width: 100%; max-width: 100%; margin: 36px 0 0; }
         }

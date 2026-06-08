@@ -121,7 +121,7 @@ const FlipBtn = ({ onClick }) => (
 // ─── AVATAR ───────────────────────────────────────────────────────────────────
 const Avatar = ({ src }) => (
   <div style={{
-    flexShrink: 0, width: "110px", height: "110px",
+    flexShrink: 0, width: "120px", height: "120px",
     borderRadius: "50%",
     background: "linear-gradient(135deg, #1c2d4a 0%, #0f1a2e 100%)",
     border: "1px solid rgba(59,130,246,0.25)",
@@ -134,7 +134,7 @@ const Avatar = ({ src }) => (
       ? <img
           src={src}
           alt="Alexey Raikov"
-          width="110" height="110"
+          width="120" height="120"
           draggable="false"
           style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", pointerEvents: "none" }}
           onError={e => {
@@ -195,8 +195,14 @@ const Front = ({ onFlip, avatarSrc }) => (
         <div style={{
           fontFamily: "'DM Sans', sans-serif",
           fontSize: "13px", color: C.sub,
-          lineHeight: 1.4, marginBottom: "10px",
+          lineHeight: 1.4, marginBottom: "5px",
         }}>Building products and systems.</div>
+
+        <div style={{
+          fontFamily: "'DM Mono', monospace",
+          fontSize: "10px", color: C.muted,
+          letterSpacing: "0.05em", marginBottom: "10px",
+        }}>GMT +3 / REMOTE</div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "10px" }}>
           <span style={{
@@ -235,11 +241,7 @@ const Front = ({ onFlip, avatarSrc }) => (
 
         {/* Footer */}
         <div className="bc-footer">
-          <span style={{
-            fontFamily: "'DM Mono', monospace", fontSize: "9px",
-            color: "rgba(78,86,102,0.35)", letterSpacing: "0.06em",
-            userSelect: "none",
-          }}>ovraik · 2026</span>
+          <span />
           <FlipBtn onClick={onFlip} />
         </div>
       </div>
@@ -291,7 +293,7 @@ export default function BusinessCard({ style = {} }) {
       <div
         className="bc-scene"
         style={{
-          width: "100%", maxWidth: "780px",
+          width: "100%", maxWidth: "820px",
           ...style,
         }}
       >
