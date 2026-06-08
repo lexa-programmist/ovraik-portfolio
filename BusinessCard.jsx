@@ -16,14 +16,12 @@ const C = {
 // ─── GLOBAL STYLES ────────────────────────────────────────────────────────────
 const STYLES = `
   .bc-scene {
-    perspective: 1000px;
+    perspective: 1200px;
     width: 100%;
-    height: 100%;
   }
   .bc-card {
     position: relative;
     width: 100%;
-    height: 100%;
     transform-style: preserve-3d;
     transform-origin: center center;
     transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
@@ -32,22 +30,41 @@ const STYLES = `
     transform: rotateY(180deg);
   }
   .bc-face {
-    position: absolute;
-    inset: 0;
-    border-radius: 13px;
+    border-radius: 14px;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
   .bc-face-front {
+    position: relative;
     transform: rotateY(0deg);
+    z-index: 1;
   }
   .bc-face-back {
+    position: absolute;
+    inset: 0;
     transform: rotateY(180deg);
   }
   .bc-scene:hover .bc-face {
     border-color: rgba(255,255,255,0.13);
     box-shadow: 0 8px 48px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.04), 0 1px 0 rgba(255,255,255,0.07) inset;
+  }
+  .bc-contacts {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+  }
+  .bc-footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  @media (max-width: 600px) {
+    .bc-contacts {
+      flex-direction: column;
+      gap: 9px;
+    }
   }
 `;
 
@@ -104,20 +121,21 @@ const FlipBtn = ({ onClick }) => (
 // ─── AVATAR ───────────────────────────────────────────────────────────────────
 const Avatar = ({ src }) => (
   <div style={{
-    flexShrink: 0, width: "100px", height: "100px",
+    flexShrink: 0, width: "110px", height: "110px",
     borderRadius: "50%",
     background: "linear-gradient(135deg, #1c2d4a 0%, #0f1a2e 100%)",
-    border: "1px solid rgba(59,130,246,0.22)",
-    boxShadow: "0 0 0 3px rgba(59,130,246,0.05)",
+    border: "1px solid rgba(59,130,246,0.25)",
+    boxShadow: "0 0 0 3px rgba(59,130,246,0.06), 0 4px 20px rgba(0,0,0,0.4)",
     display: "flex", alignItems: "center", justifyContent: "center",
     overflow: "hidden",
-    marginTop: "2px",
+    imageRendering: "crisp-edges",
   }}>
     {src
       ? <img
           src={src}
-          alt="Avatar"
-          style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: "50%" }}
+          alt="Alexey Raikov"
+          width="110" height="110"
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
           onError={e => {
             e.currentTarget.style.display = "none";
             e.currentTarget.nextSibling.style.display = "flex";
@@ -127,7 +145,7 @@ const Avatar = ({ src }) => (
     }
     <span style={{
       fontFamily: "'Bricolage Grotesque', sans-serif",
-      fontSize: "21px", fontWeight: 700,
+      fontSize: "22px", fontWeight: 700,
       color: "rgba(180,200,230,0.7)",
       letterSpacing: "-0.01em", userSelect: "none",
       display: src ? "none" : "flex",
@@ -143,9 +161,9 @@ const Front = ({ onFlip, avatarSrc }) => (
       background: "linear-gradient(155deg, #0E1320 0%, #0B0F16 55%, #090C12 100%)",
       border: `1px solid ${C.border}`,
       boxShadow: "0 8px 40px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.05) inset",
-      padding: "18px 20px 16px 20px",
-      display: "flex", flexDirection: "row", gap: "0",
-      overflow: "hidden",
+      padding: "22px 24px 20px 24px",
+      display: "flex", flexDirection: "row", alignItems: "center",
+      gap: "22px", overflow: "hidden",
     }}
   >
     {/* Акцент сверху */}
@@ -154,88 +172,77 @@ const Front = ({ onFlip, avatarSrc }) => (
       background: "linear-gradient(90deg, transparent 5%, rgba(59,130,246,0.28) 40%, rgba(59,130,246,0.28) 60%, transparent 95%)",
     }} />
 
-    {/* Подпись — левый нижний угол */}
-    <span style={{
-      position: "absolute", bottom: "14px", left: "20px",
-      fontFamily: "'DM Mono', monospace", fontSize: "9px",
-      color: "rgba(78,86,102,0.35)", letterSpacing: "0.06em",
-      pointerEvents: "none", userSelect: "none",
-    }}>ovraik · 2026</span>
+    {/* ── ФОТО ── */}
+    <Avatar src={avatarSrc} />
 
-    {/* ══ ЛЕВАЯ КОЛОНКА ~60% ══ */}
+    {/* ── ОСНОВНОЙ БЛОК ── */}
     <div style={{
-      width: "60%", display: "flex", flexDirection: "row",
-      alignItems: "flex-start", gap: "14px", flexShrink: 0,
+      flex: 1, display: "flex", flexDirection: "column",
+      justifyContent: "space-between", gap: "0", minWidth: 0,
+      height: "100%",
     }}>
-      <Avatar src={avatarSrc} />
 
-      {/* Текстовый блок */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "0", minWidth: 0 }}>
-        {/* 1. Имя */}
+      {/* ВЕРХ: имя + фраза + статус + роли */}
+      <div>
         <div style={{
           fontFamily: "'Bricolage Grotesque', sans-serif",
-          fontSize: "18px", fontWeight: 700,
+          fontSize: "21px", fontWeight: 700,
           color: C.text, letterSpacing: "-0.03em", lineHeight: 1.1,
-          marginBottom: "3px",
+          marginBottom: "4px",
         }}>Alexey Raikov</div>
 
-        {/* 2. Фраза */}
         <div style={{
           fontFamily: "'DM Sans', sans-serif",
-          fontSize: "11.5px", color: C.sub,
-          lineHeight: 1.35, marginBottom: "10px",
+          fontSize: "13px", color: C.sub,
+          lineHeight: 1.4, marginBottom: "10px",
         }}>Building products and systems.</div>
 
-        {/* 3. Статус */}
         <div style={{ display: "flex", alignItems: "center", gap: "5px", marginBottom: "10px" }}>
           <span style={{
             width: "5px", height: "5px", borderRadius: "50%",
             background: C.green, flexShrink: 0,
-            boxShadow: `0 0 5px ${C.green}55`,
+            boxShadow: `0 0 5px ${C.green}44`,
           }} />
           <span style={{
             fontFamily: "'DM Mono', monospace", fontSize: "10px",
-            color: "rgba(34,197,94,0.5)", letterSpacing: "0.03em",
+            color: "rgba(34,197,94,0.48)", letterSpacing: "0.03em",
           }}>Open to Opportunities</span>
         </div>
 
-        {/* 4. Роли */}
         <div style={{ display: "flex", gap: "5px" }}>
           {["Builder", "Operator"].map(r => (
             <span key={r} style={{
               fontFamily: "'DM Mono', monospace", fontSize: "10px",
               color: C.muted, border: `1px solid rgba(255,255,255,0.07)`,
-              borderRadius: "4px", padding: "2px 7px", letterSpacing: "0.04em",
+              borderRadius: "4px", padding: "2px 8px", letterSpacing: "0.04em",
             }}>{r}</span>
           ))}
         </div>
       </div>
-    </div>
 
-    {/* Вертикальный разделитель */}
-    <div style={{
-      width: "1px", alignSelf: "stretch",
-      background: "rgba(255,255,255,0.05)",
-      margin: "0 18px", flexShrink: 0,
-    }} />
+      {/* НИЗ: контакты + footer */}
+      <div>
+        {/* Разделитель */}
+        <div style={{ height: "1px", background: "rgba(255,255,255,0.05)", margin: "14px 0 12px" }} />
 
-    {/* ══ ПРАВАЯ КОЛОНКА ~40% ══ */}
-    <div style={{
-      flex: 1, display: "flex", flexDirection: "column",
-      justifyContent: "space-between", minWidth: 0,
-    }}>
-      {/* 5. Контакты — по центру колонки */}
-      <div style={{ display: "flex", flexDirection: "column", gap: "7px", paddingTop: "2px" }}>
-        <ContactLink label="Telegram" href="https://t.me/ovraik" />
-        <ContactLink label="LinkedIn" href="https://www.linkedin.com/in/alexey-raikov-20224228a" />
-        <ContactLink label="Email"    href="mailto:ovraikin@gmail.com" />
+        {/* Контакты горизонтально (на мобиле — вертикально через CSS) */}
+        <div className="bc-contacts" style={{ marginBottom: "14px" }}>
+          <ContactLink label="Telegram" href="https://t.me/ovraik" />
+          <ContactLink label="LinkedIn" href="https://www.linkedin.com/in/alexey-raikov-20224228a" />
+          <ContactLink label="Email"    href="mailto:ovraikin@gmail.com" />
+        </div>
+
+        {/* Footer */}
+        <div className="bc-footer">
+          <span style={{
+            fontFamily: "'DM Mono', monospace", fontSize: "9px",
+            color: "rgba(78,86,102,0.35)", letterSpacing: "0.06em",
+            userSelect: "none",
+          }}>ovraik · 2026</span>
+          <FlipBtn onClick={onFlip} />
+        </div>
       </div>
 
-    </div>
-
-    {/* Flip — абсолютно правый нижний угол, как на Back */}
-    <div style={{ position: "absolute", bottom: "16px", right: "20px" }}>
-      <FlipBtn onClick={onFlip} />
     </div>
   </div>
 );
@@ -283,7 +290,7 @@ export default function BusinessCard({ style = {} }) {
       <div
         className="bc-scene"
         style={{
-          width: "100%", maxWidth: "590px", height: "210px",
+          width: "100%", maxWidth: "780px",
           ...style,
         }}
       >

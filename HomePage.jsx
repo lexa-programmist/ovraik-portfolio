@@ -883,7 +883,7 @@ export default function HomePage() {
         }
         .hero-card-desktop {
           flex-shrink: 0;
-          width: 590px;
+          width: 780px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -891,13 +891,16 @@ export default function HomePage() {
         .hero-card-mobile {
           display: none !important;
         }
+        @media (max-width: 1280px) {
+          .hero-card-desktop { width: 660px; }
+        }
         @media (max-width: 1080px) {
-          .hero-card-desktop { width: 480px; }
+          .hero-card-desktop { width: 560px; }
         }
         @media (max-width: 900px) {
           .hero-layout { flex-direction: column; align-items: flex-start; gap: 0; }
           .hero-card-desktop { display: none !important; }
-          .hero-card-mobile  { display: flex !important; width: 100%; max-width: 590px; margin: 40px auto 0; }
+          .hero-card-mobile  { display: flex !important; width: 100%; max-width: 100%; margin: 36px 0 0; }
         }
         @media (max-width: 720px) {
           .about-grid   { grid-template-columns: 1fr !important; gap: 28px !important; }
