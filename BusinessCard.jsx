@@ -118,25 +118,24 @@ const FlipBtn = ({ onClick }) => (
   </button>
 );
 
-// ─── AVATAR ───────────────────────────────────────────────────────────────────
-const Avatar = ({ src }) => (
+// ─── PHOTO PANEL ─────────────────────────────────────────────────────────────
+const PhotoPanel = ({ src }) => (
   <div style={{
-    flexShrink: 0, width: "120px", height: "120px",
-    borderRadius: "50%",
+    flexShrink: 0, width: "150px", position: "relative",
     background: "linear-gradient(135deg, #1c2d4a 0%, #0f1a2e 100%)",
-    border: "1px solid rgba(59,130,246,0.25)",
-    boxShadow: "0 0 0 3px rgba(59,130,246,0.06), 0 4px 20px rgba(0,0,0,0.4)",
-    display: "flex", alignItems: "center", justifyContent: "center",
-    overflow: "hidden",
-    imageRendering: "crisp-edges",
+    overflow: "hidden", borderRadius: "13px 0 0 13px",
   }}>
     {src
       ? <img
           src={src}
           alt="Alexey Raikov"
-          width="120" height="120"
           draggable="false"
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", pointerEvents: "none" }}
+          style={{
+            position: "absolute", inset: 0,
+            width: "100%", height: "100%",
+            objectFit: "cover", objectPosition: "center top",
+            display: "block", pointerEvents: "none",
+          }}
           onError={e => {
             e.currentTarget.style.display = "none";
             e.currentTarget.nextSibling.style.display = "flex";
@@ -144,13 +143,19 @@ const Avatar = ({ src }) => (
         />
       : null
     }
-    <span style={{
-      fontFamily: "'Bricolage Grotesque', sans-serif",
-      fontSize: "22px", fontWeight: 700,
-      color: "rgba(180,200,230,0.7)",
-      letterSpacing: "-0.01em", userSelect: "none",
+    <div style={{
+      position: "absolute", inset: 0,
       display: src ? "none" : "flex",
-    }}>AR</span>
+      alignItems: "center", justifyContent: "center",
+      fontFamily: "'Bricolage Grotesque', sans-serif",
+      fontSize: "28px", fontWeight: 700,
+      color: "rgba(180,200,230,0.7)", userSelect: "none",
+    }}>AR</div>
+    <div style={{
+      position: "absolute", top: 0, right: 0, bottom: 0, width: "48px",
+      background: "linear-gradient(90deg, transparent, #0B0F16)",
+      pointerEvents: "none",
+    }} />
   </div>
 );
 
@@ -162,25 +167,25 @@ const Front = ({ onFlip, avatarSrc }) => (
       background: "linear-gradient(155deg, #0E1320 0%, #0B0F16 55%, #090C12 100%)",
       border: `1px solid ${C.border}`,
       boxShadow: "0 8px 40px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.05) inset",
-      padding: "22px 24px 20px 24px",
-      display: "flex", flexDirection: "row", alignItems: "center",
-      gap: "22px", overflow: "hidden",
+      padding: "0",
+      display: "flex", flexDirection: "row",
+      overflow: "hidden",
     }}
   >
     {/* Акцент сверху */}
     <div style={{
-      position: "absolute", top: 0, left: 0, right: 0, height: "1px",
+      position: "absolute", top: 0, left: 0, right: 0, height: "1px", zIndex: 2,
       background: "linear-gradient(90deg, transparent 5%, rgba(59,130,246,0.28) 40%, rgba(59,130,246,0.28) 60%, transparent 95%)",
     }} />
 
-    {/* ── ФОТО ── */}
-    <Avatar src={avatarSrc} />
+    {/* ── ФОТО ПАНЕЛЬ ── */}
+    <PhotoPanel src={avatarSrc} />
 
     {/* ── ОСНОВНОЙ БЛОК ── */}
     <div style={{
       flex: 1, display: "flex", flexDirection: "column",
-      justifyContent: "space-between", gap: "0", minWidth: 0,
-      height: "100%",
+      justifyContent: "space-between", minWidth: 0,
+      padding: "20px 22px 18px 20px",
     }}>
 
       {/* ВЕРХ: имя + фраза + статус + роли */}
