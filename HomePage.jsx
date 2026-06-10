@@ -27,7 +27,7 @@ transition={{ duration: 0.45, delay, ease: "easeOut" }}
 );
 };
 const Divider = () => (
-<div style={{ height: "1px", background: tk.border, margin: "0 auto", maxWidth: "960px" }}
+<div style={{ height: "1px", background: tk.border, margin: "0 auto", maxWidth: "960px" }}>
 );
 // ─── GRAIN ───────────────────────────────────────────────────────────────────
 // FIX: added transform + willChange to put grain on its own GPU layer (stops repaint jitter
