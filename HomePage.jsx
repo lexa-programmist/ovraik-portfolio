@@ -2,20 +2,18 @@ import { useState, useEffect, useRef } from "react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
 import { Link, useLocation } from "react-router-dom";
 import BusinessCard from "./BusinessCard";
-
 // ─── TOKENS ──────────────────────────────────────────────────────────────────
 const tk = {
-  bg:         "#090C10",
-  surface:    "#0E1218",
+  bg: "#090C10",
+  surface: "#0E1218",
   surfaceHov: "#131820",
-  border:     "rgba(255,255,255,0.07)",
-  borderHov:  "rgba(255,255,255,0.13)",
-  text:       "#E2E5EC",
-  muted:      "#4E5666",
-  sub:        "#7C8592",
-  accent:     "#3B82F6",
+  border: "rgba(255,255,255,0.07)",
+  borderHov: "rgba(255,255,255,0.13)",
+  text: "#E2E5EC",
+  muted: "#4E5666",
+  sub: "#7C8592",
+  accent: "#3B82F6",
 };
-
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
 const Reveal = ({ children, delay = 0, y = 18 }) => {
   const ref = useRef(null);
@@ -28,12 +26,11 @@ const Reveal = ({ children, delay = 0, y = 18 }) => {
     >{children}</motion.div>
   );
 };
-
 const Divider = () => (
   <div style={{ height: "1px", background: tk.border, margin: "0 auto", maxWidth: "960px" }} />
 );
-
 // ─── GRAIN ───────────────────────────────────────────────────────────────────
+// FIX: added transform + willChange to put grain on its own GPU layer (stops repaint jitter on scroll)
 const Grain = () => (
   <svg style={{ position: "fixed", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0, opacity: 0.022, transform: "translateZ(0)", willChange: "transform" }}>
     <filter id="g">
@@ -43,8 +40,8 @@ const Grain = () => (
     <rect width="100%" height="100%" filter="url(#g)" />
   </svg>
 );
-
 // ─── GRID ─────────────────────────────────────────────────────────────────────
+// FIX: same GPU layer fix as Grain
 const Grid = () => (
   <div style={{
     position: "fixed", inset: 0, pointerEvents: "none", zIndex: 0,
@@ -54,35 +51,31 @@ const Grid = () => (
     transform: "translateZ(0)", willChange: "transform",
   }} />
 );
-
 // ─── NAV ─────────────────────────────────────────────────────────────────────
 const navLinks = [
-  { label: "About",    id: "about"    },
+  { label: "About", id: "about" },
   { label: "Projects", id: "projects" },
-  { label: "Focus",    id: "focus"    },
-  { label: "Contact",  id: "contact"  },
+  { label: "Focus", id: "focus" },
+  { label: "Contact", id: "contact" },
 ];
-
 const Nav = ({ active }) => {
   const [scrolled, setScrolled] = useState(false);
-  const [open,     setOpen]     = useState(false);
-
+  const [open, setOpen] = useState(false);
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 32);
     window.addEventListener("scroll", h);
     return () => window.removeEventListener("scroll", h);
   }, []);
-
   return (
     <motion.nav
       initial={{ opacity: 0, y: -12 }}
-      animate={{ opacity: 1,  y: 0  }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
       style={{
         position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-        background:     scrolled ? "rgba(9,12,16,0.9)"     : "transparent",
-        backdropFilter: scrolled ? "blur(16px)"            : "none",
-        borderBottom:   scrolled ? `1px solid ${tk.border}` : "1px solid transparent",
+        background: scrolled ? "rgba(9,12,16,0.9)" : "transparent",
+        backdropFilter: scrolled ? "blur(16px)" : "none",
+        borderBottom: scrolled ? `1px solid ${tk.border}` : "1px solid transparent",
         transition: "all 0.35s ease",
       }}
     >
@@ -95,7 +88,6 @@ const Nav = ({ active }) => {
             ovraik
           </span>
         </a>
-
         {/* Desktop links */}
         <div className="nav-desktop" style={{ display: "flex", gap: "28px" }}>
           {navLinks.map(l => (
@@ -107,7 +99,6 @@ const Nav = ({ active }) => {
             }}>{l.label}</a>
           ))}
         </div>
-
         {/* Mobile toggle */}
         <button
           className="nav-mobile"
@@ -122,7 +113,6 @@ const Nav = ({ active }) => {
           </span>
         </button>
       </div>
-
       {/* Mobile drawer */}
       {open && (
         <div style={{
@@ -143,15 +133,14 @@ const Nav = ({ active }) => {
     </motion.nav>
   );
 };
-
 // ─── HERO ─────────────────────────────────────────────────────────────────────
 const Hero = () => {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
+  // FIX: disable parallax and fadeOut on mobile — prevents scroll jitter on iOS
   const isMobile = typeof window !== "undefined" && window.innerWidth < 768;
   const yParallax = useTransform(scrollYProgress, [0, 1],    isMobile ? [0, 0] : [0, 60]);
   const fadeOut   = useTransform(scrollYProgress, [0.4, 1], isMobile ? [1, 1] : [1, 0]);
-
   return (
     <section ref={ref} id="hero" style={{
       position: "relative", minHeight: "100vh",
@@ -164,7 +153,6 @@ const Hero = () => {
       >
         {/* Two-column layout: left = text, right = card */}
         <div className="hero-layout">
-
           {/* LEFT: hero text */}
           <div className="hero-text">
             <motion.h1
@@ -183,7 +171,6 @@ const Hero = () => {
               systems,<br />
               <span style={{ color: tk.sub }}>and useful tools.</span>
             </motion.h1>
-
             <motion.p
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
@@ -197,7 +184,6 @@ const Hero = () => {
             >
               I build products, automate workflows, and design systems that solve real problems. Most of my work starts as an idea and turns into something usable.
             </motion.p>
-
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -212,7 +198,7 @@ const Hero = () => {
                 transition: "opacity 0.2s, transform 0.2s",
               }}
                 onMouseEnter={e => { e.currentTarget.style.opacity = "0.88"; e.currentTarget.style.transform = "translateY(-1px)"; }}
-                onMouseLeave={e => { e.currentTarget.style.opacity = "1";    e.currentTarget.style.transform = "translateY(0)";    }}
+                onMouseLeave={e => { e.currentTarget.style.opacity = "1"; e.currentTarget.style.transform = "translateY(0)"; }}
               >
                 View Projects
                 <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
@@ -228,13 +214,12 @@ const Hero = () => {
                 transition: "border-color 0.2s, color 0.2s",
               }}
                 onMouseEnter={e => { e.currentTarget.style.borderColor = tk.borderHov; e.currentTarget.style.color = tk.text; }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = tk.border;    e.currentTarget.style.color = tk.sub;  }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = tk.border; e.currentTarget.style.color = tk.sub; }}
               >
                 Get In Touch
               </a>
             </motion.div>
           </div>
-
           {/* RIGHT: business card (desktop only — on mobile it goes below via CSS) */}
           <motion.div
             className="hero-card-desktop"
@@ -244,9 +229,7 @@ const Hero = () => {
           >
             <BusinessCard />
           </motion.div>
-
         </div>
-
         {/* MOBILE: card below hero text, above About */}
         <motion.div
           className="hero-card-mobile"
@@ -257,12 +240,10 @@ const Hero = () => {
         >
           <BusinessCard />
         </motion.div>
-
       </motion.div>
     </section>
   );
 };
-
 // ─── ABOUT ────────────────────────────────────────────────────────────────────
 const About = () => (
   <section id="about" style={{ padding: "100px 24px", position: "relative", zIndex: 1 }}>
@@ -277,7 +258,6 @@ const About = () => (
           About
         </span>
       </Reveal>
-
       <div className="about-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "64px" }}>
         <Reveal delay={0.08}>
           <div>
@@ -297,7 +277,6 @@ const About = () => (
             </p>
           </div>
         </Reveal>
-
         <Reveal delay={0.16}>
           <div>
             <p style={{ fontFamily: "'DM Sans',sans-serif", fontSize: "15px", color: tk.sub, lineHeight: 1.75, margin: "0 0 16px" }}>
@@ -323,7 +302,6 @@ const About = () => (
     </div>
   </section>
 );
-
 // ─── PROJECTS ─────────────────────────────────────────────────────────────────
 const projects = [
   {
@@ -352,7 +330,6 @@ const projects = [
     tags: ["AI", "Internal Tools", "Automation", "Productivity"],
   },
 ];
-
 const ProjectCard = ({ num, title, category, description, status, tags, delay, caseStudyLink }) => {
   const [hov, setHov] = useState(false);
   const ongoing = status === "Ongoing";
@@ -383,7 +360,6 @@ const ProjectCard = ({ num, title, category, description, status, tags, delay, c
             </span>
           </div>
         </div>
-
         <h3 style={{
           fontFamily: "'Bricolage Grotesque',sans-serif",
           fontSize: "clamp(20px, 2.5vw, 26px)", fontWeight: 700,
@@ -434,7 +410,6 @@ const ProjectCard = ({ num, title, category, description, status, tags, delay, c
     </Reveal>
   );
 };
-
 const Projects = () => (
   <section id="projects" style={{ padding: "80px 24px 100px", position: "relative", zIndex: 1 }}>
     <Divider />
@@ -463,31 +438,29 @@ const Projects = () => (
     </div>
   </section>
 );
-
 // ─── CURRENT FOCUS ────────────────────────────────────────────────────────────
 const focusCards = [
   {
     title: "Product Development",
-    icon: "✦",
+    icon: "\u2726",
     desc: "Taking ideas from zero to a working product. I'm interested in the full arc — identifying a problem, shaping a solution, and building something usable.",
   },
   {
     title: "Business Operations",
-    icon: "◈",
+    icon: "\u25c8",
     desc: "How things actually run inside organizations. Process design, operational workflows, and removing the manual work that slows teams down.",
   },
   {
     title: "Analytics & Decision Making",
-    icon: "◇",
+    icon: "\u25c7",
     desc: "Using data to understand problems and make better decisions. Working with Python, analytical tools, and research to turn numbers into actionable insights.",
   },
   {
     title: "Automation",
-    icon: "◉",
+    icon: "\u25c9",
     desc: "Building systems that handle recurring tasks reliably. The goal is always the same: less manual work, more consistent output.",
   },
 ];
-
 const CurrentFocus = () => (
   <section id="focus" style={{ padding: "80px 24px 100px", position: "relative", zIndex: 1 }}>
     <Divider />
@@ -539,7 +512,6 @@ const CurrentFocus = () => (
     </div>
   </section>
 );
-
 // ─── CURRENTLY EXPLORING ─────────────────────────────────────────────────────
 const exploringItems = [
   {
@@ -567,7 +539,6 @@ const exploringItems = [
     desc: "Using data and analytical tools to understand businesses and markets. How numbers translate into decisions.",
   },
 ];
-
 const Exploring = () => (
   <section id="exploring" style={{ padding: "80px 24px 100px", position: "relative", zIndex: 1 }}>
     <Divider />
@@ -616,10 +587,7 @@ const Exploring = () => (
     </div>
   </section>
 );
-
 // ─── CONTACT ─────────────────────────────────────────────────────────────────
-
-// SVG arrow icon — monochrome, minimal, no emoji
 const ArrowIcon = ({ style }) => (
   <svg
     width="14" height="14" viewBox="0 0 14 14"
@@ -629,8 +597,6 @@ const ArrowIcon = ({ style }) => (
     <path d="M2.5 11.5L11 3M11 3H4.5M11 3V9.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
-
-// Single contact row (Telegram, Email)
 const ContactRow = ({ label, handle, href }) => {
   const [hovered, setHovered] = useState(false);
   return (
@@ -670,16 +636,12 @@ const ContactRow = ({ label, handle, href }) => {
     </motion.a>
   );
 };
-
-// LinkedIn row — two separate actions: Profile + Open App
 const LinkedInRow = () => {
   const [hovered, setHovered] = useState(false);
   const profileUrl = "https://www.linkedin.com/in/alexey-raikov-20224228a";
   const appUrl = "linkedin://in/alexey-raikov-20224228a";
-
   const handleOpenApp = (e) => {
     e.preventDefault();
-    // Try app first, fall back to browser
     const start = Date.now();
     window.location.href = appUrl;
     setTimeout(() => {
@@ -688,7 +650,6 @@ const LinkedInRow = () => {
       }
     }, 800);
   };
-
   return (
     <div
       onMouseEnter={() => setHovered(true)}
@@ -701,7 +662,6 @@ const LinkedInRow = () => {
         transition: "background 0.18s",
       }}
     >
-      {/* Left — label + handle */}
       <div style={{ display: "flex", gap: "24px", alignItems: "center" }}>
         <span style={{
           fontFamily: "'DM Mono',monospace", fontSize: "11px",
@@ -713,8 +673,6 @@ const LinkedInRow = () => {
           Alexey Raikov
         </span>
       </div>
-
-      {/* Right — two action links */}
       <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
         <LinkedInAction href={profileUrl} label="Profile" />
         <span style={{ color: tk.border, fontSize: "11px", userSelect: "none" }}>·</span>
@@ -723,7 +681,6 @@ const LinkedInRow = () => {
     </div>
   );
 };
-
 const LinkedInAction = ({ href, label, onClick }) => {
   const [h, setH] = useState(false);
   return (
@@ -756,14 +713,11 @@ const LinkedInAction = ({ href, label, onClick }) => {
     </a>
   );
 };
-
 const Contact = () => (
   <section id="contact" style={{ padding: "80px 24px 100px", position: "relative", zIndex: 1 }}>
     <Divider />
     <div style={{ maxWidth: "960px", margin: "0 auto", paddingTop: "80px" }}>
       <div className="contact-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "64px" }}>
-
-        {/* Left */}
         <Reveal>
           <div>
             <span style={{
@@ -786,8 +740,6 @@ const Contact = () => (
             </p>
           </div>
         </Reveal>
-
-        {/* Right — contact rows */}
         <Reveal delay={0.1}>
           <div style={{ display: "flex", flexDirection: "column", paddingTop: "4px" }}>
             <ContactRow label="Telegram" handle="@ovraik" href="https://t.me/ovraik" />
@@ -795,10 +747,7 @@ const Contact = () => (
             <ContactRow label="Email" handle="ovraikin@gmail.com" href="mailto:ovraikin@gmail.com" />
           </div>
         </Reveal>
-
       </div>
-
-      {/* Footer */}
       <Reveal delay={0.15}>
         <div style={{
           marginTop: "72px", paddingTop: "24px",
@@ -817,12 +766,10 @@ const Contact = () => (
     </div>
   </section>
 );
-
 // ─── APP ─────────────────────────────────────────────────────────────────────
 export default function HomePage() {
   const [active, setActive] = useState("hero");
   const location = useLocation();
-
   useEffect(() => {
     if (location.state?.scrollTo) {
       const el = document.getElementById(location.state.scrollTo);
@@ -832,7 +779,6 @@ export default function HomePage() {
       window.history.replaceState({}, "");
     }
   }, []);
-
   useEffect(() => {
     const obs = new IntersectionObserver(
       (entries) => entries.forEach(e => { if (e.isIntersecting) setActive(e.target.id); }),
@@ -841,7 +787,6 @@ export default function HomePage() {
     document.querySelectorAll("section[id]").forEach(s => obs.observe(s));
     return () => obs.disconnect();
   }, []);
-
   useEffect(() => {
     const blockCtx = e => e.preventDefault();
     const blockKeys = e => {
@@ -862,7 +807,6 @@ export default function HomePage() {
       document.removeEventListener("dragstart", blockDrag);
     };
   }, []);
-
   return (
     <div style={{ background: tk.bg, minHeight: "100vh", position: "relative", overflowX: "hidden" }}>
       <style>{`
@@ -884,13 +828,10 @@ export default function HomePage() {
         ::selection { background: transparent; }
         ::-webkit-scrollbar { width: 3px; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.07); border-radius: 2px; }
-
         @media (max-width: 640px) {
           .nav-desktop { display: none !important; }
           .nav-mobile  { display: flex !important; }
         }
-
-        /* Hero layout */
         .hero-layout {
           display: flex;
           align-items: center;
@@ -923,23 +864,21 @@ export default function HomePage() {
         @media (max-width: 900px) {
           .hero-layout { flex-direction: column; align-items: flex-start; gap: 0; max-width: 100%; margin: 0; }
           .hero-card-desktop { display: none !important; }
-          .hero-card-mobile  { display: flex !important; width: 100%; max-width: 100%; margin: 36px 0 0; }
+          .hero-card-mobile { display: flex !important; width: 100%; max-width: 100%; margin: 36px 0 0; }
         }
         @media (max-width: 720px) {
-          .about-grid   { grid-template-columns: 1fr !important; gap: 28px !important; }
+          .about-grid { grid-template-columns: 1fr !important; gap: 28px !important; }
           .contact-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
-          .focus-grid   { grid-template-columns: 1fr 1fr !important; }
+          .focus-grid { grid-template-columns: 1fr 1fr !important; }
         }
         @media (max-width: 480px) {
-          .focus-grid   { grid-template-columns: 1fr !important; }
+          .focus-grid { grid-template-columns: 1fr !important; }
           .explore-grid { grid-template-columns: 1fr !important; }
         }
       `}</style>
-
       <Grain />
       <Grid />
       <Nav active={active} />
-
       <main style={{ position: "relative", zIndex: 1, maxWidth: "100%" }}>
         <Hero />
         <About />
@@ -947,22 +886,21 @@ export default function HomePage() {
         <CurrentFocus />
         <Exploring />
         <Contact />
-        
         {/* Hidden SEO section for search engines */}
         <section style={{ position: "absolute", left: "-9999px", width: "1px", height: "1px", overflow: "hidden" }} aria-hidden="true">
           <h2>About Alexey Raikov (Ovraik)</h2>
           <p>
-            Alexey Raikov, also known as Ovraik, is a product builder and automation developer from Belarus. 
-            Specializing in Telegram Mini Apps development, AI workflows, and automation systems. 
+            Alexey Raikov, also known as Ovraik, is a product builder and automation developer from Belarus.
+            Specializing in Telegram Mini Apps development, AI workflows, and automation systems.
             Creator of Fishka, a Telegram Mini App marketplace for streetwear resellers and independent brands.
           </p>
           <p>
-            Skills include product development, marketplace design, automation systems, AI-powered workflows, 
-            internal tooling, and distribution systems. Based in Belarus, working remotely on digital products 
+            Skills include product development, marketplace design, automation systems, AI-powered workflows,
+            internal tooling, and distribution systems. Based in Belarus, working remotely on digital products
             and automation solutions.
           </p>
           <p>
-            Projects: Fishka Telegram Mini App, Content Distribution System, AI Workflow Experiments. 
+            Projects: Fishka Telegram Mini App, Content Distribution System, AI Workflow Experiments.
             Focus areas: Telegram ecosystem, product development, business operations, analytics and decision making, automation.
           </p>
         </section>
