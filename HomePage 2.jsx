@@ -32,7 +32,7 @@ const Divider = () => (
 // ─── GRAIN ───────────────────────────────────────────────────────────────────
 // FIX: added transform + willChange to put grain on its own GPU layer (stops repaint jitter on scroll)
 const Grain = () => (
-  <svg style={{ position: "fixed", inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0, opacity: 0.022, transform: "translateZ(0)", willChange: "transform" }}>
+  <svg style={{ position: "fixed" , inset: 0, width: "100%", height: "100%", pointerEvents: "none", zIndex: 0, opacity: 0.022, transform: "translateZ(0)", willChange: "transform" }}>
     <filter id="g">
       <feTurbulence type="fractalNoise" baseFrequency="0.72" numOctaves="4" stitchTiles="stitch" />
       <feColorMatrix type="saturate" values="0" />
