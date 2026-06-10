@@ -1,32 +1,33 @@
-import { useState, useEffect, useRef } from "react";
-import { motion, useScroll, useTransform, useInView } from "framer-motion";
-import { Link, useLocation } from "react-router-dom";
-import BusinessCard from "./BusinessCard";
+import { useState, useEffect, useRef } from “react”;
+import { motion, useScroll, useTransform, useInView } from “framer-motion”;
+import { Link, useLocation } from “react-router-dom”;
+import BusinessCard from “./BusinessCard”;
 // ─── TOKENS ──────────────────────────────────────────────────────────────────
 const tk = {
-  bg: "#090C10",
-  surface: "#0E1218",
-  surfaceHov: "#131820",
-  border: "rgba(255,255,255,0.07)",
-  borderHov: "rgba(255,255,255,0.13)",
-  text: "#E2E5EC",
-  muted: "#4E5666",
-  sub: "#7C8592",
-  accent: "#3B82F6",
+bg: “#090C10”,
+surface: “#0E1218”,
+surfaceHov: “#131820”,
+border: “rgba(255,255,255,0.07)”,
+borderHov: “rgba(255,255,255,0.13)”,
+text: “#E2E5EC”,
+muted: “#4E5666”,
+sub: “#7C8592”,
+accent: “#3B82F6”,
 };
 // ─── HELPERS ─────────────────────────────────────────────────────────────────
-const Reveal = ({ children, delay = 0, y = 18 }) => {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-48px" });
-  return (
-    <motion.div ref={ref}
-      initial={{ opacity: 0, y }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.65, delay, ease: [0.22, 1, 0.36, 1] }}
-    >{children}</motion.div>
-  );
+const Reveal = ({ children, delay = 0 }) => {
+const ref = useRef(null);
+const inView = useInView(ref, { once: true, margin: “-32px” });
+return (
+<motion.div ref={ref}
+initial={{ opacity: 0 }}
+animate={inView ? { opacity: 1 } : {}}
+transition={{ duration: 0.45, delay, ease: “easeOut” }}
+>{children}</motion.div>
+);
 };
 const Divider = () => (
+
   <div style={{ height: "1px", background: tk.border, margin: "0 auto", maxWidth: "960px" }} />
 );
 // ─── GRAIN ───────────────────────────────────────────────────────────────────
@@ -148,7 +149,7 @@ const Hero = () => {
       padding: "0 40px", overflow: "hidden",
     }}>
       <motion.div
-        style={{ y: yParallax, opacity: fadeOut, width: "100%", position: "relative", zIndex: 1 }}
+        style={{ y: yParallax, opacity: fadeOut, width: "100%", position: "relative", zIndex: 1, willChange: "transform" }}
         className="hero-inner"
       >
         {/* Two-column layout: left = text, right = card */}
@@ -800,11 +801,11 @@ export default function HomePage() {
     const blockDrag = e => e.preventDefault();
     document.addEventListener("contextmenu", blockCtx);
     document.addEventListener("keydown", blockKeys);
-    document.addEventListener("dragstart", blockDrag);
+    document.addEventListener("dragstart", blockDrag, { passive: true });
     return () => {
       document.removeEventListener("contextmenu", blockCtx);
       document.removeEventListener("keydown", blockKeys);
-      document.removeEventListener("dragstart", blockDrag);
+      document.removeEventListener("dragstart", blockDrag, { passive: true });
     };
   }, []);
   return (
@@ -812,7 +813,7 @@ export default function HomePage() {
       <style>{`
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html, body { overflow-x: hidden; overflow-y: auto; height: auto; }
-        html { scroll-behavior: smooth; touch-action: pan-y; }
+        html { scroll-behavior: smooth; touch-action: pan-y; overscroll-behavior: none; }
         body { touch-action: pan-y; overscroll-behavior-y: auto; }
         html, body, p, h1, h2, h3, h4, h5, h6, span, div {
           -webkit-tap-highlight-color: transparent;
